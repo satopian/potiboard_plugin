@@ -1,5 +1,5 @@
 # potiboard_plugin
-お絵かき掲示板 POTI-boardのための外部phpプログラム https://pbbs.sakura.ne.jp/
+お絵かき掲示板 POTI-boardのための外部phpプログラムです。 https://pbbs.sakura.ne.jp/
 
 ## newimg.php
 
