@@ -12,11 +12,11 @@ potiboard.phpと同じディレクトリにアップロードします。
 
 ### 特徴
 
-POTI-boardに投稿された一番新しい画像を取得して静的HTMLファイルに表示する事ができます。
-掲示板にはいらなくても新着画像を見ることができるようになります。
+POTI-boardに投稿された一番新しい画像を取得して静的HTMLファイルに表示します。
+掲示板に入らなくても新着画像を見ることができるようになります。
 
 ### 使い方
-画像のかわりに、このphpのファイルをimgタグで呼び出します。
+画像と同じようにこのphpのファイルをimgタグで呼び出します。
 
 HTMLファイルに
 &lt;img src=&quot;https://hoge.ne.jp/bbs/newimg.php&quot; alt=&quot;&quot; width=&quot;300&quot;&gt;
