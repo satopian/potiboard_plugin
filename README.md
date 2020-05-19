@@ -7,7 +7,6 @@
 
 ### 設置方法
 
-まだPOTI-boardを設置していない方は
 [POTI改公式サイト](https://poti-k.info/)からPOTI-boardをダウンロードして設置します。
 
 newimg.phpを
