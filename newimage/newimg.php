@@ -47,11 +47,26 @@ $fp = fopen(LOGFILE, "r");//ログを開く
 		++$i;
 	
 	}
+	fclose($fp);
 	if(!$filename){//画像が無かったら
 		$filename=$default;//デフォルト画像を表示
 	}
-	fclose($fp);
 //画像を出力
-header('Content-Type: image/png');
+$img_type=mime_content_type($filename);
+
+switch ($img_type):
+	case 'image/png':
+		header('Content-Type: image/png');
+		break;
+	case 'image/jpeg':
+		header('Content-Type: image/jpeg');
+		break;
+	case 'image/gif':
+		header('Content-Type: image/gif');
+		break;
+	default :
+		header('Content-Type: image/png');
+	endswitch;
+		
 readfile($filename);
 ?>
