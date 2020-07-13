@@ -1,13 +1,22 @@
 <?php
 //POTI-board plugin search(c)2020 さとぴあ
+//v0.2 lot.200715
+//
 //https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
+
 //使用条件。
+
 //テンプレートの著作表記のリンクを削除したり見えなくしないでください。
+
 //免責
+
 //このプログラムを利用した事によるいかなる損害にもさとぴあは一切の責任を負いません。
+
 //サポート
+
 //ご質問は
+
 //GitHubのこのプログラムのリポジトリのIssuesにお願いします。
 //GitHubの開発配布のためのリポジトリ
 //https://github.com/satopian/potiboard_plugin/
@@ -18,6 +27,7 @@
 $max_search=120;
 
 //更新履歴
+//ｖ0.2 2020.07.14 負荷削減。ページングで表示している記事の分だけレス先を探して見つけるようにした。
 //ｖ0.1 2020.07.13 GitHubに公開
 
 //設定を変更すればより多く検索できるようになりますが、サーバの負荷が高くなります。
@@ -114,22 +124,15 @@ while ($line = fgets($fp ,4096)) {
 		){
 
 			$k=1;
-				foreach($tree as $treeline){
-					$treeline=','.rtrim($treeline).',';//行の両端にコンマを追加
-				if(strpos($treeline,','.$no.',')!==false){
-					$treenos=explode(",",$treeline);
-					$no=$treenos[1];//スレッドの親
-						$link=PHP_SELF.'?res='.$no;
-				$img='';		
-				if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
-					$img=THUMB_DIR.$time.'s.jpg';
-				}
-				else{
-				if($is_img){
-					$img=IMG_DIR.$time.$ext;
-					}
-				}
-						$arr[]=$no.','.$name.','.$sub.','.$com.','.$link.','.$img.','.$time;
+				// foreach($tree as $treeline){
+				// 	$treeline=','.rtrim($treeline).',';//行の両端にコンマを追加
+				// if(strpos($treeline,','.$no.',')!==false){
+				// 	$treenos=explode(",",$treeline);
+				// 	$no=$treenos[1];//スレッドの親
+				// 		$link=PHP_SELF.'?res='.$no;
+				// $img='';		
+						// $arr[]=$no.','.$name.','.$sub.','.$com.','.$link.','.$img.','.$time;
+						$arr[]=$no.','.$name.','.$sub.','.$com.','.$ext.','.$time;
 
 
 						++$i;
@@ -138,10 +141,10 @@ while ($line = fgets($fp ,4096)) {
 				// 	break;
 				// }
 					// ++$k;
-			}	
+			// }	
 				if($i>$max_search){break;}//1掲示板あたりの最大検索数
 				++$l;
-		}
+		// }
 		
 	}
 
@@ -157,7 +160,8 @@ $j=0;$countimg=0;
 if($arr){
 	foreach($arr as $i => $val){
 		if($i > $page-2){//カウンタの$iが表示するページになるまで待つ
-			list($no,$name,$sub,$com,$link,$img,$time)=explode(",",$val);
+			// list($no,$name,$sub,$com,$link,$img,$time)=explode(",",$val);
+			list($no,$name,$sub,$com,$ext,$time)=explode(",",$val);
 			// $img='';
 			// if($ext){//ファイルの存在確認を最小限に表示しているページの分だけ
 			// 	if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？ファイルの存在確認は表示しているページの分だけ
@@ -167,6 +171,37 @@ if($arr){
 			// 		}
 			// 		++$countimg;
 			// }
+			$img='';
+			if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
+				$img=THUMB_DIR.$time.'s.jpg';
+			}
+			else{
+				if(is_file(IMG_DIR.$time.$ext)){
+					$img=IMG_DIR.$time.$ext;
+				}
+			}
+			$link='';
+			foreach($tree as $treeline){
+				$treeline=','.rtrim($treeline).',';//行の両端にコンマを追加
+			if(strpos($treeline,','.$no.',')!==false){
+				$treenos=explode(",",$treeline);
+				$no=$treenos[1];//スレッドの親
+					$link=PHP_SELF.'?res='.$no;
+
+					// $arr[]=$no.','.$name.','.$sub.','.$com.','.$link.','.$img.','.$time;
+
+
+					// ++$i;
+			}
+			// if($k>=2000){//スレッド数
+			// 	break;
+			// }
+				// ++$k;
+		}	
+
+
+
+
 			$time=substr($time,-13,10);
 			$postedtime = date ("m/d G:i", $time);
 			$sub=strip_tags($sub);
