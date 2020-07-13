@@ -122,29 +122,11 @@ while ($line = fgets($fp ,4096)) {
 				$query!==''&&($radio===1||$radio===null)&&stripos($s_name,$query)!==false||//作者名が含まれる
 				$query!==''&&($radio===2&&$s_name===$query)//作者名完全一致
 		){
-
-			$k=1;
-				// foreach($tree as $treeline){
-				// 	$treeline=','.rtrim($treeline).',';//行の両端にコンマを追加
-				// if(strpos($treeline,','.$no.',')!==false){
-				// 	$treenos=explode(",",$treeline);
-				// 	$no=$treenos[1];//スレッドの親
-				// 		$link=PHP_SELF.'?res='.$no;
-				// $img='';		
-						// $arr[]=$no.','.$name.','.$sub.','.$com.','.$link.','.$img.','.$time;
 						$arr[]=$no.','.$name.','.$sub.','.$com.','.$ext.','.$time;
-
-
 						++$i;
-				}
-				// if($k>=2000){//スレッド数
-				// 	break;
-				// }
-					// ++$k;
-			// }	
+		}
 				if($i>$max_search){break;}//1掲示板あたりの最大検索数
 				++$l;
-		// }
 		
 	}
 
@@ -160,24 +142,16 @@ $j=0;$countimg=0;
 if($arr){
 	foreach($arr as $i => $val){
 		if($i > $page-2){//カウンタの$iが表示するページになるまで待つ
-			// list($no,$name,$sub,$com,$link,$img,$time)=explode(",",$val);
 			list($no,$name,$sub,$com,$ext,$time)=explode(",",$val);
-			// $img='';
-			// if($ext){//ファイルの存在確認を最小限に表示しているページの分だけ
-			// 	if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？ファイルの存在確認は表示しているページの分だけ
-			// 		$img=THUMB_DIR.$time.'s.jpg';}
-			// 		else{
-			// 			$img=IMG_DIR.$time.$ext;
-			// 		}
-			// 		++$countimg;
-			// }
 			$img='';
-			if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
-				$img=THUMB_DIR.$time.'s.jpg';
-			}
-			else{
-				if(is_file(IMG_DIR.$time.$ext)){
-					$img=IMG_DIR.$time.$ext;
+			if($ext){
+				if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
+					$img=THUMB_DIR.$time.'s.jpg';
+				}
+				else{
+					if(is_file(IMG_DIR.$time.$ext)){
+						$img=IMG_DIR.$time.$ext;
+					}
 				}
 			}
 			$link='';
@@ -187,23 +161,11 @@ if($arr){
 				$treenos=explode(",",$treeline);
 				$no=$treenos[1];//スレッドの親
 					$link=PHP_SELF.'?res='.$no;
-
-					// $arr[]=$no.','.$name.','.$sub.','.$com.','.$link.','.$img.','.$time;
-
-
-					// ++$i;
 			}
-			// if($k>=2000){//スレッド数
-			// 	break;
-			// }
-				// ++$k;
 		}	
 
-
-
-
 			$time=substr($time,-13,10);
-			$postedtime = date ("m/d G:i", $time);
+			$postedtime = date ("Y/m/d G:i", $time);
 			$sub=strip_tags($sub);
 			$com=strip_tags($com);
 			$com=mb_strcut($com,0,180);
@@ -213,14 +175,8 @@ if($arr){
 			$dat['comments'][]= compact('no','name','encoded_name','sub','img','com','link','postedtime');
 
 		}
-		// if($imgsearch){
-		// 	$j=$countimg+1;
-		// 	if($countimg>=$page+30-1){break;}
-		// }
-		// else{
 			$j=$i+1;//表示件数
 			if($i >= $page+30-2){break;}
-		// }
 	}
 }
 unset($sub,$name,$no,$boardname);
@@ -272,11 +228,6 @@ if($countarr>=$nxetpage){
 }
 }
 
-// if($page>=151){//表示する最大ページ数
-// 	$dat['prev']='<a href="?page='.$prevpage.$search_type.$query_l.'">≪前の30件</a>'; 
-// 	$dat['nxet']='<a href="./">掲示板にもどる</a>';
-		
-// }
 elseif($page>=31){
 	$dat['prev']= '<a href="?page='.$prevpage.$search_type.$query_l.'">≪前の30件</a>'; 
 	if($countarr>=$nxetpage){
