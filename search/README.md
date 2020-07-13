@@ -15,14 +15,21 @@ POTI-boardに検索機能を追加します。
 [POTI改公式サイト](https://poti-k.info/)からPOTI-boardをダウンロードして設置します。
 
 search.php、search.html、search.cssを
-potiboard.phpと同じディレクトリにアップロードします。
+potiboard.phpと同じディレクトリにアップロードします。  
+
+### Skinny.php
+
+search.phpはSkinny.phpを使っています。
+POTI-board改二には最初から入っていますので何もしなくていいはずです。  
+しかしその他のバージョンのPOTI-boardで使う場合は[Skinny.php](http://skinny.sx68.net/)をアップロードしないと動きません。  
+search.phpと同じディレクトリにアップロードします。
 
 ### 使い方
 
 search.phpにリンクするだけです。 
-search.htmlのフォームのHTMLをPOTI-boardのテーマのhtmlに追加したり、掲示版外部のHTMLに記述して検索窓を作る事もできます。  
+search.htmlの検索窓のHTMLをPOTI-boardのテーマのhtmlに追加したり掲示版外部のHTMLに記述して検索窓を作って使う事もできます。  
 検索オプションが何も指定されていない時は投稿者名部分一致のコメントの検索になります。  
-getで指定していますので検索結果のurlをリンクしてクリックすれば、同じ検索結果がでてきます。  
+getで指定していますので検索結果のurlをリンクすれば同じ検索結果がでてきます。  
 
 ### 仕様
 
