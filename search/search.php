@@ -1,6 +1,6 @@
 <?php
 //POTI-board plugin search(c)2020 さとぴあ
-//v0.5 lot.200714
+//v1.0 lot.200714
 //
 //https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
@@ -39,6 +39,8 @@ $max_search=120;
 require(__DIR__.'/config.php');
 //HTMLテンプレート Skinny
 require_once(__DIR__.'/Skinny.php');
+
+$dat['skindir']=SKIN_DIR;
 
 // $time_start = microtime(true);
 //タイムゾーン
@@ -255,6 +257,6 @@ if($arr){
 
 unset($arr);
 //HTML出力
-$Skinny->SkinnyDisplay('search.html', $dat );
+$Skinny->SkinnyDisplay(SKIN_DIR.'search.html', $dat );
 
 ?>
