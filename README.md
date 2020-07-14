@@ -3,7 +3,7 @@
 
 [お絵かき掲示板](https://pbbs.sakura.ne.jp/)交流サイトで使っている新着画像表示プログラムを一般配布用にカスタマイズしました。
 
-newimg.phpとsearch.php2種類のプラグインがあります。
+newimg.phpとsearch.php、2つのプラグインがあります。
 
 ## newimg.php
 
