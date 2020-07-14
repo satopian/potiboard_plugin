@@ -1,6 +1,6 @@
 <?php
 //POTI-board plugin search(c)2020 さとぴあ
-//v0.4 lot.200715
+//v0.5 lot.200714
 //
 //https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
