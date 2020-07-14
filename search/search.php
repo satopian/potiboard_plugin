@@ -1,6 +1,6 @@
 <?php
 //POTI-board plugin search(c)2020 さとぴあ
-//v0.2 lot.200715
+//v0.4 lot.200715
 //
 //https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
@@ -27,8 +27,11 @@
 $max_search=120;
 
 //更新履歴
-//ｖ0.2 2020.07.14 負荷削減。ページングで表示している記事の分だけレス先を探して見つけるようにした。
-//ｖ0.1 2020.07.13 GitHubに公開
+//v0.5 2020.07.14 イラストの表示数を1ページあたり20枚、コメントの表示数を30件に。
+//v0.4 2020.07.14 compact()で格納してextract()で展開するようにした。 
+//v0.3 2020.07.14 コード整理と高速化。
+//v0.2 2020.07.14 負荷削減。ページングで表示している記事の分だけレス先を探して見つけるようにした。
+//v0.1 2020.07.13 GitHubに公開
 
 //設定を変更すればより多く検索できるようになりますが、サーバの負荷が高くなります。
 
@@ -80,6 +83,10 @@ else{//作者名
 $dat['query_l']=$query_l;
 if($imgsearch){
 	$dat['imgsearch']=true;
+	$disp_count_of_page=20;//画像検索の時の1ページあたりの表示件数
+}
+else{
+	$disp_count_of_page=30;//通常検索の時の1ページあたりの表示件数
 }
 
 if(!$page){
@@ -104,12 +111,12 @@ while ($line = fgets($fp ,4096)) {
 	}
 	$continue_to_search=false;
 	if($imgsearch){//画像検索の場合
-		if($is_img){
-			$continue_to_search=true;//検索続行
+		if($is_img){//画像がある
+			$continue_to_search=true;//画像がある行だけ検索
 		}
 	}
 		else{//それ以外
-			$continue_to_search=true;
+			$continue_to_search=true;//すべての行を検索
 		}
 
 	if($continue_to_search){
@@ -122,7 +129,8 @@ while ($line = fgets($fp ,4096)) {
 				$query!==''&&($radio===1||$radio===null)&&stripos($s_name,$query)!==false||//作者名が含まれる
 				$query!==''&&($radio===2&&$s_name===$query)//作者名完全一致
 		){
-						$arr[]=$no.','.$name.','.$sub.','.$com.','.$ext.','.$time;
+						// $arr[]=$no.','.$name.','.$sub.','.$com.','.$ext.','.$time;
+						$arr[]=compact('no','name','sub','com','ext','time');
 						++$i;
 		}
 				if($i>$max_search){break;}//1掲示板あたりの最大検索数
@@ -142,7 +150,8 @@ $j=0;$countimg=0;
 if($arr){
 	foreach($arr as $i => $val){
 		if($i > $page-2){//カウンタの$iが表示するページになるまで待つ
-			list($no,$name,$sub,$com,$ext,$time)=explode(",",$val);
+			extract($val);
+			// list($no,$name,$sub,$com,$ext,$time)=explode(",",$val);
 			$img='';
 			if($ext){
 				if(is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
@@ -176,7 +185,7 @@ if($arr){
 
 		}
 			$j=$i+1;//表示件数
-			if($i >= $page+30-2){break;}
+			if($i >= $page+$disp_count_of_page-2){break;}
 	}
 }
 unset($sub,$name,$no,$boardname);
@@ -215,23 +224,23 @@ else{
 
 //ページング
 
-$nxetpage=$page+30;//次ページ
-$prevpage=$page-30;//前のページ
+$nxetpage=$page+$disp_count_of_page;//次ページ
+$prevpage=$page-$disp_count_of_page;//前のページ
 $countarr=count($arr);//配列の数
 $dat['prev']=false;
 $dat['nxet']=false;
 
-if($page<=30){
+if($page<=$disp_count_of_page){
 	$dat['prev']='<a href="./">掲示板にもどる</a>';//前のページ
 if($countarr>=$nxetpage){
-	$dat['nxet']='<a href="?page='.$nxetpage.$search_type.$query_l.'">次の30件≫</a>';//次のページ
+	$dat['nxet']='<a href="?page='.$nxetpage.$search_type.$query_l.'">次の'.$disp_count_of_page.'件≫</a>';//次のページ
 }
 }
 
-elseif($page>=31){
-	$dat['prev']= '<a href="?page='.$prevpage.$search_type.$query_l.'">≪前の30件</a>'; 
+elseif($page>=$disp_count_of_page+1){
+	$dat['prev']= '<a href="?page='.$prevpage.$search_type.$query_l.'">≪前の'.$disp_count_of_page.'件</a>'; 
 	if($countarr>=$nxetpage){
-		$dat['nxet']='<a href="?page='.$nxetpage.$search_type.$query_l.'">次の30件≫</a>';
+		$dat['nxet']='<a href="?page='.$nxetpage.$search_type.$query_l.'">次の'.$disp_count_of_page.'件≫</a>';
 	}
 	else{
 		$dat['nxet']='<a href="./">掲示板にもどる</a>';
