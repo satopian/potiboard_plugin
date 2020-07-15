@@ -34,11 +34,11 @@ search.htmlとsearch.cssをカスタマイズする事もできます。
 
 ### 使い方
 
-search.phpにリンクするだけです。 
-search.htmlの検索窓のHTMLをPOTI-boardのテーマのhtmlに追加したり掲示版外部のHTMLに記述して検索窓を作って使う事もできます。  
+search.phpにリンクするだけです。  
+search.htmlの検索窓のHTMLをPOTI-boardのテーマのhtmlに追加したり掲示版外部のHTMLに記述して検索窓を作って使う事もできます。    
 検索オプションが何も指定されていない時は投稿者名部分一致のコメントの検索になります。  
 getで指定していますので検索結果のurlをリンクすれば同じ検索結果がでてきます。  
-POTI-board改二のデフォルトテーマと[PINK](https://github.com/satopian/pink)は投稿者名にリンクする形で対応ずみです。(2020/07/14)    
+POTI-board改二のデフォルトテーマと[PINK](https://github.com/satopian/pink)は投稿者名にリンクしました。(2020/07/14)    
 名前をクリックするとその人が描いたイラストの一覧がでてきます。  
 
 ### 仕様
