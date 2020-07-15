@@ -7,24 +7,17 @@
 
 ### 特徴
 
-POTI-board改二に検索機能を追加します。
-コメント検索画面と画像検索画面を切り替えて使う事もできます。
+POTI-board改二に検索機能を追加するプラグインです。
+コメント検索画面と画像検画面を切り替える事ができます。
 
 ### 設置方法
 
-[POTI改公式サイト](https://poti-k.info/)からPOTI-boardをダウンロードして設置します。
+[POTI改公式サイト](https://poti-k.info/)からPOTI-board改二をダウンロードして設置します。
 
 search.phpをpotiboard.phpと同じディレクトリにアップロードします。 
 search.html、search.cssを、config.phpで設定したthemeディレクトリにアップロードします。
 
-[POTI-board改二](https://github.com/sakots/poti-kaini) v2.7.6移行のバージョンには標準で入っていますので何もしなくていいはずです。
-
-### Skinny.php
-
-search.phpはSkinny.phpを使っています。
-POTI-board改二には最初から入っていますので何もしなくていいはずです。  
-しかしその他のバージョンのPOTI-boardで使う場合は[Skinny.php](http://skinny.sx68.net/)をアップロードしないと動きません。  
-search.phpと同じディレクトリにアップロードします。
+[POTI-board改二](https://github.com/sakots/poti-kaini) v2.7.6以降のバージョンには標準で入っていますので何もしなくていいはずです。
 
 ### テーマ
 
