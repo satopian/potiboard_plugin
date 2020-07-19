@@ -30,7 +30,7 @@ search.php
  
 potiboard.phpと同じディレクトリに
 search.phpと
-themeディレクトリ一式をアップロードし、[Skinny.php](http://skinny.sx68.net/)をsearch.phpと同じディレクトリにアップロードします。
+themeディレクトリ一式をアップロードして[Skinny.php](http://skinny.sx68.net/)をsearch.phpと同じディレクトリにアップロードします。
 
 ### テーマ
 
