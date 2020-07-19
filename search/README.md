@@ -34,10 +34,10 @@ themeディレクトリ一式をアップロードし、[Skinny.php](http://skin
 
 ### テーマ
 
-改二のデフォルトテーマと、[PINK](https://github.com/satopian/pink)は対応ずみです。  
+改二のデフォルトテーマと、[PINK](https://github.com/satopian/pink)が対応ずみです。  
 名前をクリックするとその人が描いたイラストの一覧がでてきます。  
-見た目を変更したい時はテーマを変更します。
-search.htmlとsearch.cssを自分でカスタマイズする事もできます。
+見た目を変更したい時はテーマを入れ替えます。  
+search.htmlとsearch.cssをカスタマイズする事もできます。 
 
 ### その他の使い方
 
