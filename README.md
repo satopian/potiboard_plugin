@@ -13,7 +13,7 @@ POTI-boardに投稿された一番新しい画像を取得して静的HTMLファ
 掲示板に入らなくても新着画像を見ることができるようになります。
 
 [newimage.php](https://github.com/satopian/potiboard_plugin/tree/master/newimage)
-の設置方法や使用方法は[こちら](https://github.com/satopian/potiboard_plugin/tree/master/newimage)
+の設置方法や使用方法は[こちら](https://github.com/satopian/potiboard_plugin/tree/master/newimage)。
 
 ## search.php
 
@@ -23,7 +23,7 @@ POTI-boardに検索機能を追加します。
 コメント検索画面と画像検索画面を切り替えて使う事もできます。
 
 [search.php](https://github.com/satopian/potiboard_plugin/tree/master/search)
-の設置方法や使用方法は[こちら](https://github.com/satopian/potiboard_plugin/tree/master/search)
+の設置方法や使用方法は[こちら](https://github.com/satopian/potiboard_plugin/tree/master/search)。
 
 ### 免責
 
