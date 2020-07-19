@@ -19,7 +19,8 @@ search.html、search.cssを、config.phpで設定したthemeディレクトリ�
 
 [POTI-board改二](https://github.com/sakots/poti-kaini) v2.7.6以降のバージョンには標準で入っていますので何もしなくていいはずです。
 
-改二以外のPOTI-boardの設置例  
+#### 改二以外のPOTI-boardの場合は
+
 potiboard.php  
 Skinny.php  
 search.php  
@@ -33,9 +34,9 @@ themeディレクトリ一式をアップロードし、[Skinny.php](http://skin
 
 ### テーマ
 
-デフォルトテーマと、[PINK](https://github.com/satopian/pink)が対応しています。
+改二のデフォルトテーマと、[PINK](https://github.com/satopian/pink)は対応ずみです。  
 名前をクリックするとその人が描いたイラストの一覧がでてきます。  
-見た目を変更したい時はテーマを変更。
+見た目を変更したい時はテーマを変更します。
 search.htmlとsearch.cssを自分でカスタマイズする事もできます。
 
 ### その他の使い方
