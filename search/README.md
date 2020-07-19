@@ -14,9 +14,6 @@ POTI-board改二に検索機能を追加するプラグインです。
 
 [POTI改公式サイト](https://poti-k.info/)からPOTI-board改二をダウンロードして設置します。
 
-search.phpをpotiboard.phpと同じディレクトリにアップロードします。 
-search.html、search.cssを、config.phpで設定したthemeディレクトリにアップロードします。
-
 [POTI-board改二](https://github.com/sakots/poti-kaini) v2.7.6以降のバージョンには標準で入っていますので何もしなくていいはずです。
 
 #### 改二以外のPOTI-boardの場合は
