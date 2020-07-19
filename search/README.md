@@ -19,6 +19,18 @@ search.html、search.cssを、config.phpで設定したthemeディレクトリ�
 
 [POTI-board改二](https://github.com/sakots/poti-kaini) v2.7.6以降のバージョンには標準で入っていますので何もしなくていいはずです。
 
+改二以外のPOTI-boardの設置例  
+potiboard.php  
+Skinny.php  
+search.php  
+     +/theme  
+     search.html  
+     search.css  
+ 
+potiboard.phpと同じディレクトリに
+search.phpと
+themeディレクトリ一式をアップロードし、[Skinny.php](http://skinny.sx68.net/)をsearch.phpと同じディレクトリにアップロードします。
+
 ### テーマ
 
 デフォルトテーマと、[PINK](https://github.com/satopian/pink)が対応しています。
@@ -40,6 +52,9 @@ search.phpにリンクして検索画面にリンクしたり、search.htmlの�
 このプログラムを利用した事によって発生したいかなる損害も作者は一切の責任を負いません。
 
 ## 履歴
+#### [2020/07/19] lot.200719
+ｖ1.5 lot.200719 古いバージョンのPOTI-boardにも対応。
+改二以外のPOTI-boardで使う時はSkinny.phpが別途必要です。
 #### [2020/07/18] lot.200718
 ｖ1.3 lot.200718 イラストの単位を「枚」、コメントの単位を「件」に。
 #### [2020/07/14] lot.200714
