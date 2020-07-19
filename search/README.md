@@ -16,16 +16,16 @@ POTI-board改二に検索機能を追加するプラグインです。
 
 #### 改二以外のPOTI-boardの場合は
 
+potiboard.phpと同じディレクトリに
+search.phpと
+themeディレクトリ一式をアップロードして[Skinny.php](http://skinny.sx68.net/)をsearch.phpと同じディレクトリにアップロードします。
+
 potiboard.php  
 Skinny.php  
 search.php  
 -----+/theme  
 -------search.html  
 -------search.css  
- 
-potiboard.phpと同じディレクトリに
-search.phpと
-themeディレクトリ一式をアップロードして[Skinny.php](http://skinny.sx68.net/)をsearch.phpと同じディレクトリにアップロードします。
 
 ### テーマ
 
