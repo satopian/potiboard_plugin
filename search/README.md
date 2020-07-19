@@ -23,9 +23,9 @@ search.html、search.cssを、config.phpで設定したthemeディレクトリ�
 potiboard.php  
 Skinny.php  
 search.php  
-     +/theme  
-     search.html  
-     search.css  
+-----+/theme  
+-------search.html  
+-------search.css  
  
 potiboard.phpと同じディレクトリに
 search.phpと
