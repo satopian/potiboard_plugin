@@ -27,7 +27,7 @@ search.php
 -------search.html  
 -------search.css  
 
-### 対応ずみのテーマを使う
+### 対応ずみのテーマ
 
 改二のデフォルトテーマと、[PINK](https://github.com/satopian/pink)が対応ずみです。  
 名前をクリックするとその人が描いたイラストの一覧がでます。  
