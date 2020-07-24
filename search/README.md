@@ -7,24 +7,30 @@
 
 ### 特徴
 
-POTI-board改二に検索機能を追加するプラグインです。
+POTI-boardに検索機能を追加するプラグインです。
 コメント検索画面と画像検画面を切り替える事ができます。
 
 ### 設置方法
 
-[POTI改公式サイト](https://poti-k.info/)からPOTI-board改二をダウンロードして設置します。
-
-search.phpをpotiboard.phpと同じディレクトリにアップロードします。 
-search.html、search.cssを、config.phpで設定したthemeディレクトリにアップロードします。
-
 [POTI-board改二](https://github.com/sakots/poti-kaini) v2.7.6以降のバージョンには標準で入っていますので何もしなくていいはずです。
 
-### テーマ
+#### 改二以外のPOTI-boardの場合は
 
-デフォルトテーマと、[PINK](https://github.com/satopian/pink)が対応しています。
-名前をクリックするとその人が描いたイラストの一覧がでてきます。  
-見た目を変更したい時はテーマを変更。
-search.htmlとsearch.cssを自分でカスタマイズする事もできます。
+potiboard.phpと同じディレクトリに
+search.phpと
+themeディレクトリ一式をアップロードして[Skinny.php](http://skinny.sx68.net/)をsearch.phpと同じディレクトリにアップロードします。
+
+potiboard.php  
+Skinny.php  
+search.php  
+-----+/theme  
+-------search.html  
+-------search.css  
+
+### 対応ずみのテーマ
+
+改二のデフォルトテーマと、[PINK](https://github.com/satopian/pink)が対応ずみです。  
+名前をクリックするとその人が描いたイラストの一覧がでます。  
 
 ### その他の使い方
 
@@ -40,11 +46,14 @@ search.phpにリンクして検索画面にリンクしたり、search.htmlの�
 このプログラムを利用した事によって発生したいかなる損害も作者は一切の責任を負いません。
 
 ## 履歴
-#### [2020/07/18] lot.200718
-ｖ1.3 lot.200718 イラストの単位を「枚」、コメントの単位を「件」に。
+#### [2020/07/19] lot.200719
+v1.5 lot.200719 古いバージョンのPOTI-boardにも対応。
+改二以外のPOTI-boardで使う時はSkinny.phpが別途必要です。
+#### [2020/07/19] lot.200719
+v1.4 lot.200718 負荷削減。画像のis_fileの処理の見直し。 
 #### [2020/07/14] lot.200714
-ｖ1.2 lot.200714 POTI-board改二に統合。開発はここで継続。
+v1.2 lot.200714 POTI-board改二に統合。開発はここで継続。
 #### [2020/07/14] lot.200714
-ｖ0.2 lot.200714 負荷削減。ページングで表示している記事の分だけレス先を探すようにした。
+v0.2 lot.200714 負荷削減。ページングで表示している記事の分だけレス先を探すようにした。
 #### [2020/07/13] lot.200713
-ｖ0.1 lot.200713 GitHubに公開。
+v0.1 lot.200713 GitHubに公開。
