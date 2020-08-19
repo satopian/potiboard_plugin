@@ -34,7 +34,7 @@ search.php
 
 ### その他の使い方
 
-search.phpにリンクして検索画面にリンクしたり、search.htmlの検索窓のformのhtmlで検索窓を作る事もできます。    
+search.phpの検索結果にリンクしたり、search.htmlの検索窓のformのhtmlで検索窓を作る事もできます。    
 
 ### 仕様
 
