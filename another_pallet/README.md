@@ -39,7 +39,7 @@ y_palette_utf101.zipに入っている
 
 `//パレットデータファイル名  
 define('PALETTEFILE', 'palette.dat');`  
-↑
+↑  
 やこうさんパレットだけ使う時はここを設定。  
 
 ### パレットデータファイル切り替え機能を使って追加
@@ -51,5 +51,5 @@ define('PALETTEFILE', 'palette.dat');`
 `//初期パレットpalette.txtとやこうさんパレットpalette.datを切り替えて使う時`  
 `//↓`  
 `$pallets_dat=['palette.txt','palette.dat'];`  
-
+↑  
 切り替えるパレットが初期パレットとやこうさんパレットならここを設定。
