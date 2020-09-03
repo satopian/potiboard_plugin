@@ -13,7 +13,7 @@ y_palette_utf101.zipを展開して以下のファイルを取り出してくだ
 >  colorlist.html     (パレット色一覧表HTML HTML5版)  
 >  palette_readme.txt (取り扱いマニュアル (このファイル))  
 
-POTI-boardへのパレットの追加で必要なのは  
+POTI-boardへのパレットの追加で必要なのはこの中の
 
 >palette.dat  
 
