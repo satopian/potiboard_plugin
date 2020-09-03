@@ -25,6 +25,11 @@ POTI-boardに検索機能を追加します。
 [search.php](https://github.com/satopian/potiboard_plugin/tree/master/search)
 の設置方法や使用方法は[こちら](https://github.com/satopian/potiboard_plugin/tree/master/search)。
 
+## やこうさんパレット
+
+[BBS Noteの雑記帳](http://bbsnote.s17.xrea.com/)で配布されているやこうさんパレットの再配布とPOTI-board改二への追加方法。  
+設置方法や使用方法は[こちら](https://github.com/satopian/potiboard_plugin/tree/master/another_pallet)。
+
 ### 免責
 
 このプログラムを利用した事によって発生したいかなる損害も作者は一切の責任を負いません。
