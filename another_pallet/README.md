@@ -9,14 +9,14 @@ y_palette_utf101.zipを展開して、以下のファイルを取り出してく
 
 ## 同梱ファイル一覧
 
->  palette.dat        (BBS Note差し替え用パレットデータ UTF-8版)
->  palette.txt        (Palette Matrix貼り付け用パレットデータ UTF-8版)
->  colorlist.html     (パレット色一覧表HTML HTML5版)
->  palette_readme.txt (取り扱いマニュアル (このファイル))
+>  palette.dat        (BBS Note差し替え用パレットデータ UTF-8版)  
+>  palette.txt        (Palette Matrix貼り付け用パレットデータ UTF-8版)  
+>  colorlist.html     (パレット色一覧表HTML HTML5版)  
+>  palette_readme.txt (取り扱いマニュアル (このファイル))  
 
 POTI-boardへのパレットの追加で必要なのは  
 
->palette.dat
+>palette.dat  
 
 だけです。
 
@@ -30,30 +30,30 @@ y_palette_utf101.zipに入っている
 
 >palette.txt
 
-をpotiboard.phpと同じディレクトリに入れると、元のパレットが使えなくなります。
-標準のパレットデータファイルとファイル名が同じだからです。
-このzipファイルに入っているpalette.txtは、パレットマトリクスで使うためのものなので注意が必要です。
+をpotiboard.phpと同じディレクトリに入れると、元のパレットが使えなくなります。  
+標準のパレットデータファイルとファイル名が同じだからです。  
+このzipファイルに入っているpalette.txtは、パレットマトリクスで使うためのものなので注意が必要です。  
 
 ## config.phpで設定
 
 ### 標準のパレットをやこうさんパレットに変更する
 
-`//パレットデータファイル名
-define('PALETTEFILE', 'palette.dat');`
+`//パレットデータファイル名  
+define('PALETTEFILE', 'palette.dat');`  
 
 ↑
 標準のパレットファイルからやこうさんパレットに変更。  
 
 ### 初期のパレットとやこうさんパレットを切り替えて使う
 
-`//パレットデータファイル切り替え機能を使用する しない:0 する:1 
-//切り替えるパレットデータファイルが用意できない場合は しない:0。
-define('USE_SELECT_PALETTES', '1');//←切り替えるので 1
-//要対応テーマ
+`//パレットデータファイル切り替え機能を使用する しない:0 する:1   
+//切り替えるパレットデータファイルが用意できない場合は しない:0。  
+define('USE_SELECT_PALETTES', '1');//←切り替えるので 1  
+//要対応テーマ  
 
-//パレットデータファイル切り替え機能を使用する する:1 の時のパレットデーターファイル名
-//初期パレットpalette.txtとやこうさんパレットpalette.datを切り替えて使う時
-//↓
-$pallets_dat=['palette.txt','palette.dat'];`
+//パレットデータファイル切り替え機能を使用する する:1 の時のパレットデーターファイル名  
+//初期パレットpalette.txtとやこうさんパレットpalette.datを切り替えて使う時  
+//↓  
+$pallets_dat=['palette.txt','palette.dat'];`  
 
 切り替えるパレットが初期パレットとやこうさんパレットなら上記設定で。
