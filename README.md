@@ -28,6 +28,7 @@ POTI-boardに検索機能を追加します。
 ## やこうさんパレット
 
 [BBS Noteの雑記帳](http://bbsnote.s17.xrea.com/)で配布されているやこうさんパレットの再配布。  
+  
 [設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/another_pallet)。
 
 ### 免責
