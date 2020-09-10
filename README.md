@@ -1,4 +1,4 @@
-# potiboard_plugin お絵かき掲示板 POTI-boardのための外部phpプログラム
+# potiboard plugin
 お絵かき掲示板 POTI-boardのための外部phpプログラムです。 https://pbbs.sakura.ne.jp/
 
 [お絵かき掲示板](https://pbbs.sakura.ne.jp/)交流サイトで使っている新着画像表示プログラムを一般配布用にカスタマイズしました。
