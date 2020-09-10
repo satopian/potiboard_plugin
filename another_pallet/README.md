@@ -50,6 +50,6 @@ define('PALETTEFILE', 'palette.dat');`
 `//パレットデータファイル切り替え機能を使用する する:1 の時のパレットデーターファイル名`  
 `//初期パレットpalette.txtとやこうさんパレットpalette.datを切り替えて使う時`  
 `//↓`  
-`$pallets_dat=['palette.txt','palette.dat'];`  
+`$pallets_dat=array(['標準','palette.txt'],['プロ','palette.dat']);`  
 ↑  
 切り替えるパレットが初期パレットとやこうさんパレットならここを設定。
