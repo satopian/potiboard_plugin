@@ -1,4 +1,4 @@
-# potiboard_plugin
+# POTI-board plugin
 お絵かき掲示板 POTI-boardのための外部phpプログラムです。 https://pbbs.sakura.ne.jp/
 
 [お絵かき掲示板](https://pbbs.sakura.ne.jp/)交流サイトで使っている新着画像表示プログラムを一般配布用にカスタマイズしました。
@@ -25,9 +25,9 @@ POTI-boardに検索機能を追加します。
 [search.php](https://github.com/satopian/potiboard_plugin/tree/master/search)
 の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/search)。
 
-## やこうさんパレット
+## やこうさんパレット(お絵かきーずパレット)
 
-[BBS Noteの雑記帳](http://bbsnote.s17.xrea.com/)で配布されているやこうさんパレットの再配布。  
+[BBS Noteの雑記帳](http://bbsnote.s17.xrea.com/)で配布されているやこうさんパレット(お絵かきーずパレット)の再配布。  
   
 [設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/another_pallet)。
 

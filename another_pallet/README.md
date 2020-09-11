@@ -1,4 +1,4 @@
-# やこうさんパレット
+# やこうさんパレット(お絵かきーずパレット)のPOTI-board改二への導入
 
 [BBS Noteの雑記帳](http://bbsnote.s17.xrea.com/)で配布されている動的パレットスクリプトのパレットデータファイルです。
 >アーカイブ内容を改変しない限りは再配布を自由といたします。
@@ -50,6 +50,6 @@ define('PALETTEFILE', 'palette.dat');`
 `//パレットデータファイル切り替え機能を使用する する:1 の時のパレットデーターファイル名`  
 `//初期パレットpalette.txtとやこうさんパレットpalette.datを切り替えて使う時`  
 `//↓`  
-`$pallets_dat=['palette.txt','palette.dat'];`  
+`$pallets_dat=array(['標準','palette.txt'],['プロ','palette.dat']);`  
 ↑  
 切り替えるパレットが初期パレットとやこうさんパレットならここを設定。
