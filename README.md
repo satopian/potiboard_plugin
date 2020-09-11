@@ -25,7 +25,7 @@ POTI-boardに検索機能を追加します。
 [search.php](https://github.com/satopian/potiboard_plugin/tree/master/search)
 の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/search)。
 
-## やこうさんパレット
+## やこうさんパレット(お絵かきーずパレット)
 
 [BBS Noteの雑記帳](http://bbsnote.s17.xrea.com/)で配布されているやこうさんパレット(お絵かきーずパレット)の再配布。  
   
