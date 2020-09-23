@@ -31,7 +31,7 @@ POTI-boardに検索機能を追加します。
   
 [設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/another_pallet)。
 
-### 免責
+## 免責
 
 このプログラムを利用した事によって発生したいかなる損害も作者は一切の責任を負いません。
 
