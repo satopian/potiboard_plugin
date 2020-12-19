@@ -1,6 +1,6 @@
 <?php
 //POTI-board plugin search(c)2020 さとぴあ
-//v1.6.5 lot.201002
+//v1.6.5 lot.201218
 //
 //https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
@@ -208,7 +208,6 @@ elseif($query!==''&&($radio===null||$radio===1)){//作者名
 else{//作者名	
 	$query_l='';
 	$dat['radio_chk1']='checked="checked"';
-	$radio_chk1='checked="checked"';
 }
 $dat['query_l']=$query_l;
 
@@ -271,4 +270,3 @@ unset($arr);
 //HTML出力
 $Skinny->SkinnyDisplay(SKIN_DIR.'search.html', $dat );
 
-?>
