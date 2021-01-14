@@ -1,8 +1,8 @@
 <?php
 //サムネイル作成
 //201218 webp形式対応
-	define('PERMISSION_FOR_DEST', 0606);
-	define('RE_SAMPLED', 1);
+	
+define('RE_SAMPLED', 1);
 	define('THUMB_DIR', 'poti/thumb/');
 	define('THUMB_Q', 92);
 
@@ -10,7 +10,6 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG"))return;
 	$fname=$path.$tim.$ext;
 	$size = GetImageSize($fname); // 画像の幅と高さとタイプを取得
-	// var_dump($size);
 	if(!$size){
 		return;
 	}

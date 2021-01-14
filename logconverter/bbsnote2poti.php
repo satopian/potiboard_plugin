@@ -1,5 +1,26 @@
 <?php
-//BBSNoteログ形式設定
+//BBSNote → POTI-board ログ変換ツール
+// (c)さとぴあ 2021
+
+//正常に動作する事を期待して作成していますが、なんらかの問題が発生しても作者は一切の責任を負いません。
+
+//BBSNoteのログファイルのバックアップをお願いします。消失しても責任をとれません。
+
+//まだ何も投稿していないPOTI-boardへのBBSNoteのログファイルの移動のためのプログラムです。
+//できあがったログファイルをすでに運用しているPOTI-boardに適用すると、
+//すべての記事が上書きされます。
+
+//掲示板のデータをあらかじめバックアップ。
+//いつでも元に戻せる状態にしてから実行してください。
+//この注意書きを読まずに実行してBBSNoteやPOTI-boardのログファイルが消失したとしても、なにもしてあげられません。
+//以上を了解の上、ご利用ください。
+
+//2021.1.15　さとぴあ
+
+/* ------------- 設定項目ここから ------------- */
+// BBSNoteログ設定
+
+
 //サムネイル設定
 $usethumb=1;//サムネイルを作成する する 1 しない 0
 //
@@ -9,12 +30,25 @@ $max_h=600;//この高さを超えたらサムネイル
 // しかし、それではサーバに大きな負荷がかかります。
 // もしその懸念がある場合は、いっそ、サムネイルを作成しない設定にしたほうが無難です。
 
+
+//正常に動作しているときは変更しない。
+//画像やHTMLファイルのパーミッション。
+define('PERMISSION_FOR_DEST', 0606);//初期値 0606
+//ブラウザから直接呼び出さないログファイルのパーミッション
+define('PERMISSION_FOR_LOG', 0600);//初期値 0600
+//画像や動画ファイルを保存するディレクトリのパーミッション
+define('PERMISSION_FOR_DIR', 0705);//初期値 0705
+
+/* ------------- 設定項目ここまで ------------- */
+
+//サムネイル作成ファンクション
+require(__DIR__.'/bbsnote2poti_thumb_gd.php');
+
+
 check_dir ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
 
-//サムネイル作成ファンクション
-require(__DIR__.'/bbsnote2poti_thumb_gd.php');
 
 $logfiles_arr =(glob('./data/{MSG*.log}', GLOB_BRACE));
 asort($logfiles_arr);
@@ -39,10 +73,12 @@ foreach($logfiles_arr as $logfile){
 
 			if(is_file("data/$filename")){	
 				copy("data/$filename","poti/src/$filename");
+				chmod("poti/src/$filename",PERMISSION_FOR_DEST);
 			}
-
+			
 			if(is_file("data/$pch")){	
 				copy("data/$pch","poti/src/$time.$pchext");
+				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
 			if($usethumb&&$filename&&$thumbnail_size=thumb("data/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
@@ -67,10 +103,12 @@ foreach($logfiles_arr as $logfile){
 	fclose($fp);
 }
 arsort($treeline);
-file_put_contents('./poti/tree.log',$treeline, LOCK_EX);
+file_put_contents('poti/tree.log',$treeline, LOCK_EX);
+chmod('poti/tree.log',PERMISSION_FOR_LOG);
 $newlog=mb_convert_encoding($newlog, "UTF-8", "sjis");
 arsort($newlog);
-file_put_contents('./poti/img.log',$newlog,LOCK_EX);
+file_put_contents('poti/img.log',$newlog,LOCK_EX);
+chmod('poti/img.log',PERMISSION_FOR_LOG);
 
 //GD版が使えるかチェック
 function gd_check(){
@@ -107,8 +145,8 @@ function get_gd_ver(){
 function check_dir ($path) {
 
 	if (!is_dir($path)) {
-			mkdir($path, 705,true);
-			chmod($path, 705);
+			mkdir($path, PERMISSION_FOR_DIR,true);
+			chmod($path, PERMISSION_FOR_DIR);
 	}
 }
 
