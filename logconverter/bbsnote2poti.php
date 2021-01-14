@@ -1,6 +1,7 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-// (c)さとぴあ 2021
+//(c)さとぴあ 2021
+//https://pbbs.sakura.ne.jp/
 
 //正常に動作する事を期待して作成していますが、なんらかの問題が発生しても作者は一切の責任を負いません。
 
@@ -15,21 +16,38 @@
 //この注意書きを読まずに実行してBBSNoteやPOTI-boardのログファイルが消失したとしても、なにもしてあげられません。
 //以上を了解の上、ご利用ください。
 
-//2021.1.15　さとぴあ
+//2021.1.15 さとぴあ
 
 /* ------------- 設定項目ここから ------------- */
 // BBSNoteログ設定
 
+/* -------------- BBSNoteのパス -------------- */
 
-//サムネイル設定
+//BBSNoteのconfig.phpで設定にあわせる
+//参考例は、BBSNotev7、BBSNotev8のデフォルト値
+
+$bbsnote_log_dir = 'data/';
+
+// BBSNoteのログファイルの頭文字
+$bbsnote_filehead_logs = 'MSG';//v7は、`MSG`、v8は`LOG`
+
+//BBSNoteのログファイルの拡張子
+$bbsnote_log_exe = 'log';//v7は、`log`、v8は`cgi`
+
+/* ----------------- url設定 ----------------- */
+//BBSNoteのログには'http://'、'https://'が記録されていないため
+//どちらにするか選んでください。
+$http='http://';//または 'https://'
+/* -------------- サムネイル設定 -------------- */
 $usethumb=1;//サムネイルを作成する する 1 しない 0
 //
 $max_w=600;//この幅を超えたらサムネイル
 $max_h=600;//この高さを超えたらサムネイル
-// この値をあまり小さくしないでください。例えば100に設定すると幅や高さが100以上の画像のサムネイルが作成されます。
-// しかし、それではサーバに大きな負荷がかかります。
-// もしその懸念がある場合は、いっそ、サムネイルを作成しない設定にしたほうが無難です。
+// この値をあまり小さくしないでください。例えば100に設定すると幅や高さが100以上のときにサムネイルを作ります。
+//しかし、全ログファイルの一括処理のためそれではサーバに大きな負荷がかかります。
+//もしもサーバ負荷の懸念がある場合は、「サムネイルを作成しない」にしたほうが無難です。
 
+/* -------------- パーミッション -------------- */
 
 //正常に動作しているときは変更しない。
 //画像やHTMLファイルのパーミッション。
@@ -37,62 +55,63 @@ define('PERMISSION_FOR_DEST', 0606);//初期値 0606
 //ブラウザから直接呼び出さないログファイルのパーミッション
 define('PERMISSION_FOR_LOG', 0600);//初期値 0600
 //画像や動画ファイルを保存するディレクトリのパーミッション
-define('PERMISSION_FOR_DIR', 0705);//初期値 0705
+define('PERMISSION_FOR_POTI', 0705);//初期値 0705
+//画像や動画ファイルを保存するディレクトリのパーミッション
+define('PERMISSION_FOR_DIR', 0707);//初期値 0705
 
-/* ------------- 設定項目ここまで ------------- */
+
+/* ------------- ここから下設定項目なし ------------- */
 
 //サムネイル作成ファンクション
 require(__DIR__.'/bbsnote2poti_thumb_gd.php');
 
-
-check_dir ("poti");//変換されたログファイルが入るディレクトリ
+check_poti ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
 
-
-$logfiles_arr =(glob('./data/{MSG*.log}', GLOB_BRACE));
+$logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 asort($logfiles_arr);
-foreach($logfiles_arr as $logfile){
+foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
 	$i=0;
 	while($line =fgets($fp ,4096)){
 		list($no,)
 		=explode("\t",$line."\t\t\t\t\t\t\t\t\t");
-		$log[]=$line;
+		$log[]=$line;//1スレッド分
 		$tree[]=$no;
 		
 	}
-	foreach($log as $i=>$val){
+	foreach($log as $i=>$val){//1スレッド分のログを処理
 
-		if($i===0){
+		if($i===0){//スレッドの親
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
 			=explode("\t",$val."\t");
 			$ext = '.'.pathinfo($filename,PATHINFO_EXTENSION );
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
 			$time = pathinfo($filename,PATHINFO_FILENAME);
-
-			if(is_file("data/$filename")){	
+			//POTI-board形式のファイル名に変更してコピー
+			if(is_file("data/$filename")){//画像	
 				copy("data/$filename","poti/src/$filename");
 				chmod("poti/src/$filename",PERMISSION_FOR_DEST);
 			}
-			
-			if(is_file("data/$pch")){	
+			if(is_file("data/$pch")){//動画
 				copy("data/$pch","poti/src/$time.$pchext");
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
 			if($usethumb&&$filename&&$thumbnail_size=thumb("data/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
 				$H=$thumbnail_size['h'];
-				// var_dump($W);
 			}
-
-		}else{
+			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
+			//BBSNoteはpchファイルのみのアップロードに対応。POTIは非対応。
+		}else{//スレッドの子
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
 			list($no,$name,$now,$com,,$host,$email,$url)
 			=explode("\t",$val."\t\t\t\t\t\t\t\t\t");
 		}
-
+		$url=$url ? "http://{$url}" :'';
+	//POTI-board形式のログファイルに変換
 	$newlog[]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 	
 	}
@@ -147,6 +166,13 @@ function check_dir ($path) {
 	if (!is_dir($path)) {
 			mkdir($path, PERMISSION_FOR_DIR,true);
 			chmod($path, PERMISSION_FOR_DIR);
+	}
+}
+function check_poti ($path) {
+
+	if (!is_dir($path)) {
+			mkdir($path, PERMISSION_FOR_POTI,true);
+			chmod($path, PERMISSION_FOR_POTI);
 	}
 }
 
