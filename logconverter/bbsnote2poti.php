@@ -92,15 +92,13 @@ check_dir ("poti/thumb");//変換されたサムネイルが入るディレク�
 
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 asort($logfiles_arr);
+$arr_treeno=[];
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
-	$i=0;
 	while($line =fgets($fp ,4096)){
 		list($no,)
 		=explode("\t",$line);
 		$log[]=$line;//1スレッド分
-		$tree[]=$no;
-		
 	}
 	foreach($log as $i=>$val){//1スレッド分のログを処理
 
@@ -110,11 +108,11 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 
 			$ext = '.'.pathinfo($filename,PATHINFO_EXTENSION );
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
-			$time=preg_replace('/\(.+\)/', '', $now);
-			$time=strtotime($time)*1000;
+			$time=preg_replace('/\(.+\)/', '', $now);//曜日除去
+			$time=strtotime($time)*1000;//strからUNIXタイムスタンプ
 
 			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
-			$pchext =  (in_array($pchext, ['.pch', '.spch'])) ? $pchext : '';
+			$pchext =  (in_array($pchext, ['pch', 'spch'])) ? $pchext : '';
 			
 			//POTI-board形式のファイル名に変更してコピー
 			if($ext && is_file("data/$filename")){//画像
@@ -129,15 +127,15 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				copy("data/$pch","poti/src/$time.$pchext");
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
-			// var_dump($time);
-			if($usethumb&&$filename&&$thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
+			if($usethumb&&$ext&&$thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
 				$H=$thumbnail_size['h'];
 			}
-			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
-			//BBSNoteはpchファイルのみのアップロードに対応。POTIは非対応。
+
 			$url=$url ? $http.$url :'';
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+			$tree[$no]=$no;
+
 
 		}else{//スレッドの子
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
@@ -146,22 +144,41 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			=explode("\t",$val);
 			$time=preg_replace('/\(.+\)/', '', $now);
 			$time=strtotime($time).'000';
-
 			$url=$url ? $http.$url :'';
 
 			if(!isset($newlog[$no])){//記事No重複回避 画像がある親優先
 				$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			}
+			if(!isset($tree[$no])){//記事No重複回避 画像がある親優先
+				$tree[$no]=$no;
+			}
+
 		}
-		//POTI-board形式のログファイルに変換
 
 	}
-
+	// if($tree){
 	$treeline[]=implode(",",$tree)."\n";
+	
 	unset($log);
 	unset($tree);
 	fclose($fp);
 }
+foreach($treeline as $val){
+	list($_oya,)=explode(',',rtrim($val));
+	$oya[]=$_oya;
+}
+
+foreach($treeline as $i => $val){
+	$ko=explode(',',rtrim($val));
+	unset($ko[0]);
+	if(array_intersect($ko,$oya)){
+		$ko=implode('a',$ko);//あえて`a`で結合。1件かつ末尾でなければ処理しない。
+		$treeline[$i]=preg_replace("/$ko/","",$val);
+		$treeline[$i]=str_replace([",,"], "", $treeline[$i]);
+		$treeline[$i]=preg_replace("/,\n/","\n",$treeline[$i]);
+	}
+}
+
 arsort($treeline);
 file_put_contents('poti/tree.log',$treeline, LOCK_EX);
 chmod('poti/tree.log',PERMISSION_FOR_LOG);
