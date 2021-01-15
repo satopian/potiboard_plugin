@@ -1,38 +1,55 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
+//V0.5 lot.210115 
 //(c)さとぴあ 2021
+//
 //https://pbbs.sakura.ne.jp/
 
+//免責
 //正常に動作する事を期待して作成していますが、なんらかの問題が発生しても作者は一切の責任を負いません。
 
 //BBSNoteのログファイルのバックアップをお願いします。消失しても責任をとれません。
 
-//まだ何も投稿していないPOTI-boardへのBBSNoteのログファイルの移動のためのプログラムです。
-//できあがったログファイルをすでに運用しているPOTI-boardに適用すると、
-//すべての記事が上書きされます。
+//まだ「何も投稿していないPOTI-board」にBBSNoteのログファイルを移動するためのスクリプトです。
+//「すでに運用している」POTI-boardに
+//このスクリプトで変換したログファイルを入れると「すべての記事が上書きされます」。
+//上書き、つまりこれまでの「ログが消えてしまいます」。
+//新規設置したPOTI-boardに変換したBBSNoteのログを入れてください。
+//それ以外の用途には対応していません。
 
-//掲示板のデータをあらかじめバックアップ。
+//掲示板のデータをあらかじめバックアップして
 //いつでも元に戻せる状態にしてから実行してください。
-//この注意書きを読まずに実行してBBSNoteやPOTI-boardのログファイルが消失したとしても、なにもしてあげられません。
+//BBSNoteやPOTI-boardのログファイルが消失したとしても、なにもしてあげられません。
 //以上を了解の上、ご利用ください。
+
+//また、完全なログファイルの変換を保証するものではありません。
+//いくつかのログファイルは変換できないかもしれません。
 
 //2021.1.15 さとぴあ
 
 /* ------------- 設定項目ここから ------------- */
-// BBSNoteログ設定
 
-/* -------------- BBSNoteのパス -------------- */
+/* ------------- タイムゾーン ------------- */
 
-//BBSNoteのconfig.phpで設定にあわせる
+define('DEFAULT_TIMEZONE','Asia/Tokyo');
+
+/* ------------- BBSNoteログ設定 ------------- */
+
+//BBSNoteのconfig.cgiの設定にあわせます。
 //参考例は、BBSNotev7、BBSNotev8のデフォルト値
 
+//ログファイルのディレクトリ
 $bbsnote_log_dir = 'data/';
 
 // BBSNoteのログファイルの頭文字
-$bbsnote_filehead_logs = 'MSG';//v7は、`MSG`、v8は`LOG`
+
+// $bbsnote_filehead_logs = 'MSG';//v7は、'MSG'
+$bbsnote_filehead_logs = 'LOG';//v8は'LOG'
 
 //BBSNoteのログファイルの拡張子
-$bbsnote_log_exe = 'log';//v7は、`log`、v8は`cgi`
+
+// $bbsnote_log_exe = 'log';//v7は、'log'
+$bbsnote_log_exe = 'cgi';//v8は'cgi'
 
 /* ----------------- url設定 ----------------- */
 //BBSNoteのログには'http://'、'https://'が記録されていないため
@@ -61,6 +78,10 @@ define('PERMISSION_FOR_DIR', 0707);//初期値 0705
 
 
 /* ------------- ここから下設定項目なし ------------- */
+$time_start = microtime(true);
+
+
+date_default_timezone_set(DEFAULT_TIMEZONE);
 
 //サムネイル作成ファンクション
 require(__DIR__.'/bbsnote2poti_thumb_gd.php');
@@ -76,7 +97,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	$i=0;
 	while($line =fgets($fp ,4096)){
 		list($no,)
-		=explode("\t",$line."\t\t\t\t\t\t\t\t\t");
+		=explode("\t",$line);
 		$log[]=$line;//1スレッド分
 		$tree[]=$no;
 		
@@ -85,20 +106,31 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 
 		if($i===0){//スレッドの親
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
-			=explode("\t",$val."\t");
+			=explode("\t",$val);
+
 			$ext = '.'.pathinfo($filename,PATHINFO_EXTENSION );
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
-			$time = pathinfo($filename,PATHINFO_FILENAME);
+			$time=preg_replace('/\(.+\)/', '', $now);
+			$time=strtotime($time)*1000;
+
+			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
+			$pchext =  (in_array($pchext, ['.pch', '.spch'])) ? $pchext : '';
+			
 			//POTI-board形式のファイル名に変更してコピー
-			if(is_file("data/$filename")){//画像	
-				copy("data/$filename","poti/src/$filename");
-				chmod("poti/src/$filename",PERMISSION_FOR_DEST);
+			if($ext && is_file("data/$filename")){//画像
+				if(is_file("poti/src/{$time}{$ext}")){
+					$time=$time+1;
+				}	
+				copy("data/$filename","poti/src/{$time}{$ext}");
+				chmod("poti/src/{$time}{$ext}",PERMISSION_FOR_DEST);
 			}
-			if(is_file("data/$pch")){//動画
+
+			if($pchext && is_file("data/$pch")){//動画
 				copy("data/$pch","poti/src/$time.$pchext");
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
-			if($usethumb&&$filename&&$thumbnail_size=thumb("data/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
+			// var_dump($time);
+			if($usethumb&&$filename&&$thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
 				$H=$thumbnail_size['h'];
 			}
@@ -108,12 +140,15 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
 			list($no,$name,$now,$com,,$host,$email,$url)
-			=explode("\t",$val."\t\t\t\t\t\t\t\t\t");
+			=explode("\t",$val);
+			$time=preg_replace('/\(.+\)/', '', $now);
+			$time=strtotime($time).'000';
+
 		}
-		$url=$url ? "http://{$url}" :'';
-	//POTI-board形式のログファイルに変換
-	$newlog[]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
-	
+		$url=$url ? $http.$url :'';
+		//POTI-board形式のログファイルに変換
+		$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+
 	}
 
 	$treeline[]=implode(",",$tree)."\n";
@@ -125,7 +160,7 @@ arsort($treeline);
 file_put_contents('poti/tree.log',$treeline, LOCK_EX);
 chmod('poti/tree.log',PERMISSION_FOR_LOG);
 $newlog=mb_convert_encoding($newlog, "UTF-8", "sjis");
-arsort($newlog);
+krsort($newlog);
 file_put_contents('poti/img.log',$newlog,LOCK_EX);
 chmod('poti/img.log',PERMISSION_FOR_LOG);
 
@@ -175,5 +210,11 @@ function check_poti ($path) {
 			chmod($path, PERMISSION_FOR_POTI);
 	}
 }
+
+$time = microtime(true) - $time_start; echo "完了しました {$time} 秒";
+
+// exit;
+// chmod('bbsnote2poti.php',PERMISSION_FOR_DEST);
+// unlink('bbsnote2poti.php');
 
 
