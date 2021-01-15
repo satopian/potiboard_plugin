@@ -55,9 +55,9 @@ $bbsnote_log_exe = 'cgi';//v8は'cgi'
 //BBSNoteのログには'http://'、'https://'が記録されていないため
 //どちらにするか選んでください。
 $http='http://';//または 'https://'
+
 /* -------------- サムネイル設定 -------------- */
 $usethumb=1;//サムネイルを作成する する 1 しない 0
-//
 $max_w=600;//この幅を超えたらサムネイル
 $max_h=600;//この高さを超えたらサムネイル
 // この値をあまり小さくしないでください。例えば100に設定すると幅や高さが100以上のときにサムネイルを作ります。
@@ -76,9 +76,8 @@ define('PERMISSION_FOR_POTI', 0705);//初期値 0705
 //画像や動画ファイルを保存するディレクトリのパーミッション
 define('PERMISSION_FOR_DIR', 0707);//初期値 0705
 
-
 /* ------------- ここから下設定項目なし ------------- */
-$time_start = microtime(true);
+$time_start = microtime(true);//計測開始
 
 
 date_default_timezone_set(DEFAULT_TIMEZONE);
@@ -92,12 +91,9 @@ check_dir ("poti/thumb");//変換されたサムネイルが入るディレク�
 
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 asort($logfiles_arr);
-$arr_treeno=[];
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp ,4096)){
-		list($no,)
-		=explode("\t",$line);
 		$log[]=$line;//1スレッド分
 	}
 	foreach($log as $i=>$val){//1スレッド分のログを処理
@@ -106,7 +102,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
 			=explode("\t",$val);
 
-			$ext = '.'.pathinfo($filename,PATHINFO_EXTENSION );
+			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
 			$time=preg_replace('/\(.+\)/', '', $now);//曜日除去
 			$time=strtotime($time)*1000;//strからUNIXタイムスタンプ
@@ -127,7 +123,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				copy("data/$pch","poti/src/$time.$pchext");
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
-			if($usethumb&&$ext&&$thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h)){//作成されたサムネイルのサイズ
+			if($usethumb&&$ext&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
 				$H=$thumbnail_size['h'];
 			}
@@ -156,22 +152,21 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 		}
 
 	}
-	// if($tree){
 	$treeline[]=implode(",",$tree)."\n";
 	
 	unset($log);
 	unset($tree);
 	fclose($fp);
 }
+//ツリーログ
 foreach($treeline as $val){
 	list($_oya,)=explode(',',rtrim($val));
 	$oya[]=$_oya;
 }
-
 foreach($treeline as $i => $val){
 	$ko=explode(',',rtrim($val));
 	unset($ko[0]);
-	if(array_intersect($ko,$oya)){
+	if(array_intersect($ko,$oya)){//重複回避
 		$ko=implode('a',$ko);//あえて`a`で結合。1件かつ末尾でなければ処理しない。
 		$treeline[$i]=preg_replace("/$ko/","",$val);
 		$treeline[$i]=str_replace([",,"], "", $treeline[$i]);
