@@ -88,6 +88,7 @@ require(__DIR__.'/bbsnote2poti_thumb_gd.php');
 check_poti ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
+
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 asort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
@@ -130,8 +131,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 
 			$url=$url ? $http.$url :'';
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
-				$tree[$no]=$no;
-				$all_tree[$no]=$no;
+			$tree[$no]=$no;
 
 		}else{//スレッドの子
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
@@ -146,7 +146,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			}
 			if(!isset($tree[$no])){//記事No重複回避 画像がある親優先
-					$tree[$no]=$no;
+				$tree[$no]=$no;
 			}
 
 		}
@@ -158,7 +158,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	unset($tree);
 	fclose($fp);
 }
-// ツリーログ
+//ツリーログ
 foreach($treeline as $val){
 	list($_oya,)=explode(',',rtrim($val));
 	$oya[]=$_oya;
