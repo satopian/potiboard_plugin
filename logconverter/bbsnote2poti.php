@@ -136,6 +136,9 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			}
 			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
 			//BBSNoteはpchファイルのみのアップロードに対応。POTIは非対応。
+			$url=$url ? $http.$url :'';
+			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+
 		}else{//スレッドの子
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
@@ -144,10 +147,13 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$time=preg_replace('/\(.+\)/', '', $now);
 			$time=strtotime($time).'000';
 
+			$url=$url ? $http.$url :'';
+
+			if(!isset($newlog[$no])){//記事No重複回避 画像がある親優先
+				$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+			}
 		}
-		$url=$url ? $http.$url :'';
 		//POTI-board形式のログファイルに変換
-		$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 
 	}
 
