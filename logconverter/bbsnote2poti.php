@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.5 lot.210115 
+//V0.6 lot.210116
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -28,6 +28,9 @@
 //2021.1.15 さとぴあ
 
 /* ------------- 設定項目ここから ------------- */
+//変換が完了したらこのスクリプトを削除
+
+$unlink_php_self=0; //する 1 しない 0
 
 /* ------------- タイムゾーン ------------- */
 
@@ -64,6 +67,8 @@ $max_h=600;//この高さを超えたらサムネイル
 //しかし、全ログファイルの一括処理のためそれではサーバに大きな負荷がかかります。
 //もしもサーバ負荷の懸念がある場合は、「サムネイルを作成しない」にしたほうが無難です。
 
+define('THUMB_Q', 92);//サムネイルのjpg劣化率
+
 /* -------------- パーミッション -------------- */
 
 //正常に動作しているときは変更しない。
@@ -71,25 +76,31 @@ $max_h=600;//この高さを超えたらサムネイル
 define('PERMISSION_FOR_DEST', 0606);//初期値 0606
 //ブラウザから直接呼び出さないログファイルのパーミッション
 define('PERMISSION_FOR_LOG', 0600);//初期値 0600
-//画像や動画ファイルを保存するディレクトリのパーミッション
+//POTIディレクトリのパーミッション
 define('PERMISSION_FOR_POTI', 0705);//初期値 0705
 //画像や動画ファイルを保存するディレクトリのパーミッション
-define('PERMISSION_FOR_DIR', 0707);//初期値 0705
+define('PERMISSION_FOR_DIR', 0707);//初期値 0707
 
 /* ------------- ここから下設定項目なし ------------- */
 $time_start = microtime(true);//計測開始
 
+//サムネイル
+define('RE_SAMPLED', 1);
+define('THUMB_DIR', 'poti/thumb/');
 
 date_default_timezone_set(DEFAULT_TIMEZONE);
-
-//サムネイル作成ファンクション
-require(__DIR__.'/bbsnote2poti_thumb_gd.php');
 
 check_poti ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
 
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
+
+if(!$logfiles_arr){
+	echo'BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。';
+	exit;
+}
+
 asort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
@@ -132,6 +143,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$url=$url ? $http.$url :'';
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			$tree[$no]=$no;
+			$resub=$sub ? "Re: {$sub}" :'';
 
 		}else{//スレッドの子
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
@@ -143,7 +155,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$url=$url ? $http.$url :'';
 
 			if(!isset($newlog[$no])){//記事No重複回避 画像がある親優先
-				$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			}
 			if(!isset($tree[$no])){//記事No重複回避 画像がある親優先
 				$tree[$no]=$no;
@@ -161,8 +173,10 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 //ツリーログ
 foreach($treeline as $val){
 	list($_oya,)=explode(',',rtrim($val));
+	$_treeline[$_oya]=$val;
 	$oya[]=$_oya;
 }
+$treeline=$_treeline;
 foreach($treeline as $i => $val){
 	$ko=explode(',',rtrim($val));
 	unset($ko[0]);
@@ -174,13 +188,31 @@ foreach($treeline as $i => $val){
 	}
 }
 
-arsort($treeline);
+krsort($treeline);
 file_put_contents('poti/tree.log',$treeline, LOCK_EX);
 chmod('poti/tree.log',PERMISSION_FOR_LOG);
 $newlog=mb_convert_encoding($newlog, "UTF-8", "sjis");
 krsort($newlog);
 file_put_contents('poti/img.log',$newlog,LOCK_EX);
 chmod('poti/img.log',PERMISSION_FOR_LOG);
+
+
+function check_dir ($path) {
+
+	if (!is_dir($path)) {
+			mkdir($path, PERMISSION_FOR_DIR,true);
+			chmod($path, PERMISSION_FOR_DIR);
+	}
+}
+function check_poti ($path) {
+
+	if (!is_dir($path)) {
+			mkdir($path, PERMISSION_FOR_POTI,true);
+			chmod($path, PERMISSION_FOR_POTI);
+	}
+}
+
+//サムネイル
 
 //GD版が使えるかチェック
 function gd_check(){
@@ -214,25 +246,94 @@ function get_gd_ver(){
 	return false;
 }
 
-function check_dir ($path) {
 
-	if (!is_dir($path)) {
-			mkdir($path, PERMISSION_FOR_DIR,true);
-			chmod($path, PERMISSION_FOR_DIR);
+function thumb($path,$tim,$ext,$max_w,$max_h){
+	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG"))return;
+	$fname=$path.$tim.$ext;
+	$size = GetImageSize($fname); // 画像の幅と高さとタイプを取得
+	if(!$size){
+		return;
 	}
-}
-function check_poti ($path) {
+	// リサイズ
+	if($size[0] > $max_w || $size[1] > $max_h){
+		$key_w = $max_w / $size[0];
+		$key_h = $max_h / $size[1];
+		($key_w < $key_h) ? $keys = $key_w : $keys = $key_h;
+		$out_w = ceil($size[0] * $keys);//端数の切り上げ
+		$out_h = ceil($size[1] * $keys);
+	}else{
+		return;
+	}
+	
+	switch (mime_content_type($fname)) {
+		case "image/gif";
+		if(function_exists("ImageCreateFromGIF")){//gif
+				$im_in = @ImageCreateFromGIF($fname);
+				if(!$im_in)return;
+			}
+			else{
+				return;
+			}
+		break;
+		case "image/jpeg";
+		$im_in = @ImageCreateFromJPEG($fname);//jpg
+			if(!$im_in)return;
+		break;
+		case "image/png";
+		if(function_exists("ImageCreateFromPNG")){//png
+				$im_in = @ImageCreateFromPNG($fname);
+				if(!$im_in)return;
+			}
+			else{
+				return;
+			}
+			break;
+		case "image/webp";
+		if(function_exists("ImageCreateFromWEBP")){//webp
+			$im_in = @ImageCreateFromWEBP($fname);
+			if(!$im_in)return;
+		}
+		else{
+			return;
+		}
+		break;
 
-	if (!is_dir($path)) {
-			mkdir($path, PERMISSION_FOR_POTI,true);
-			chmod($path, PERMISSION_FOR_POTI);
+		default : return;
 	}
+	// 出力画像（サムネイル）のイメージを作成
+	$nottrue = 0;
+	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
+		$im_out = ImageCreateTrueColor($out_w, $out_h);
+		// コピー＆再サンプリング＆縮小
+		if(function_exists("ImageCopyResampled")&&RE_SAMPLED){
+			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
+		}else{$nottrue = 1;}
+	}else{$im_out = ImageCreate($out_w, $out_h);$nottrue = 1;}
+	// コピー＆縮小
+	if($nottrue) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
+	// サムネイル画像を保存
+	ImageJPEG($im_out, THUMB_DIR.$tim.'s.jpg',THUMB_Q);
+	// 作成したイメージを破棄
+	ImageDestroy($im_in);
+	ImageDestroy($im_out);
+	if(!chmod(THUMB_DIR.$tim.'s.jpg',PERMISSION_FOR_DEST)){
+		return;
+	}
+
+	$thumbnail_size = [
+		'w' => $out_w,
+		'h' => $out_h,
+	];
+return $thumbnail_size;
+
 }
+
 
 $time = microtime(true) - $time_start; echo "完了しました {$time} 秒";
 
-// exit;
-// chmod('bbsnote2poti.php',PERMISSION_FOR_DEST);
-// unlink('bbsnote2poti.php');
+if($unlink_php_self){
+	chmod('bbsnote2poti.php',PERMISSION_FOR_DEST);
+	unlink('bbsnote2poti.php');
+}
 
 
