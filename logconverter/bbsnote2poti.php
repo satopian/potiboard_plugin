@@ -28,13 +28,10 @@
 //2021.1.15 さとぴあ
 
 /* ------------- 設定項目ここから ------------- */
+
 //変換が完了したらこのスクリプトを削除
 
 $unlink_php_self=0; //する 1 しない 0
-
-/* ------------- タイムゾーン ------------- */
-
-define('DEFAULT_TIMEZONE','Asia/Tokyo');
 
 /* ------------- BBSNoteログ設定 ------------- */
 
@@ -54,20 +51,26 @@ $bbsnote_filehead_logs = 'LOG';//v8は'LOG'
 // $bbsnote_log_exe = 'log';//v7は、'log'
 $bbsnote_log_exe = 'cgi';//v8は'cgi'
 
-/* ----------------- url設定 ----------------- */
-//BBSNoteのログには'http://'、'https://'が記録されていないため
-//どちらにするか選んでください。
-$http='http://';//または 'https://'
-
 /* -------------- サムネイル設定 -------------- */
+
 $usethumb=1;//サムネイルを作成する する 1 しない 0
-$max_w=600;//この幅を超えたらサムネイル
-$max_h=600;//この高さを超えたらサムネイル
+$max_w=800;//この幅を超えたらサムネイル
+$max_h=800;//この高さを超えたらサムネイル
 // この値をあまり小さくしないでください。例えば100に設定すると幅や高さが100以上のときにサムネイルを作ります。
 //しかし、全ログファイルの一括処理のためそれではサーバに大きな負荷がかかります。
 //もしもサーバ負荷の懸念がある場合は、「サムネイルを作成しない」にしたほうが無難です。
 
 define('THUMB_Q', 92);//サムネイルのjpg劣化率
+
+/* ----------------- url設定 ----------------- */
+
+//BBSNoteのログには'http://'、'https://'が記録されていないため
+//どちらにするか選んでください。
+$http='http://';//または 'https://'
+
+/* ------------- タイムゾーン ------------- */
+
+define('DEFAULT_TIMEZONE','Asia/Tokyo');
 
 /* -------------- パーミッション -------------- */
 
@@ -82,6 +85,7 @@ define('PERMISSION_FOR_POTI', 0705);//初期値 0705
 define('PERMISSION_FOR_DIR', 0707);//初期値 0707
 
 /* ------------- ここから下設定項目なし ------------- */
+
 $time_start = microtime(true);//計測開始
 
 //サムネイル
@@ -121,12 +125,13 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 
 			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
 			$pchext =  (in_array($pchext, ['pch', 'spch'])) ? $pchext : '';
-			
+			$is_img=false;
 			//POTI-board形式のファイル名に変更してコピー
 			if($ext && is_file("data/$filename")){//画像
 				if(is_file("poti/src/{$time}{$ext}")){
 					$time=$time+1;
-				}	
+				}
+				$is_img=true;	
 				copy("data/$filename","poti/src/{$time}{$ext}");
 				chmod("poti/src/{$time}{$ext}",PERMISSION_FOR_DEST);
 			}
@@ -135,7 +140,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				copy("data/$pch","poti/src/$time.$pchext");
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
-			if($usethumb&&$ext&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
+			if($usethumb&&$is_img&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
 				$H=$thumbnail_size['h'];
 			}
