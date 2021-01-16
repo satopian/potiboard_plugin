@@ -105,13 +105,20 @@ if(!$logfiles_arr){
 	exit;
 }
 
-asort($logfiles_arr);
+arsort($logfiles_arr);
+// var_dump($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp ,4096)){
 		$line=	str_replace(",", "&#44;", $line);
+		list($no,)=explode("\t",$line);
+		// $_line[]=$line;
 		$log[]=$line;//1スレッド分
 	}
+	// ksort($log);
+	// var_dump($log);
+
+	$oya=[];
 	foreach($log as $i=>$val){//1スレッド分のログを処理
 
 		if($i===0){//スレッドの親
@@ -149,6 +156,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			$tree[$no]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
+			$oya[$no]=true;
 
 		}else{//スレッドの子
 			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
@@ -160,10 +168,10 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$url=$url ? $http.$url :'';
 
 			if(!isset($newlog[$no])){//記事No重複回避 画像がある親優先
-				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+				$newlog[]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			}
-			if(!isset($tree[$no])){//記事No重複回避 画像がある親優先
-				$tree[$no]=$no;
+			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
+				$tree[]=$no;
 			}
 
 		}
@@ -171,28 +179,29 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	}
 	$treeline[]=implode(",",$tree)."\n";
 	
-	unset($log);
-	unset($tree);
+	unset($log,$tree,$oya);
 	fclose($fp);
 }
 //ツリーログ
 foreach($treeline as $val){
 	list($_oya,)=explode(',',rtrim($val));
 	$_treeline[$_oya]=$val;
-	$oya[]=$_oya;
+	$arr_oya[]=$_oya;
 }
 $treeline=$_treeline;
+ksort($treeline);
 foreach($treeline as $i => $val){
 	$ko=explode(',',rtrim($val));
+	$oya=$ko[0];
 	unset($ko[0]);
-	if(array_intersect($ko,$oya)){//重複回避
-		$ko=implode('a',$ko);//あえて`a`で結合。1件かつ末尾でなければ処理しない。
-		$treeline[$i]=preg_replace("/$ko/","",$val);
-		$treeline[$i]=str_replace([",,"], "", $treeline[$i]);
-		$treeline[$i]=preg_replace("/,\n/","\n",$treeline[$i]);
+	foreach($ko as $k =>$v){
+		if(in_array($v,$arr_oya)){
+			unset($ko[$k]);
+			$_ko=implode(",",$ko);
+			$treeline[$i]="$oya,$_ko";
+		}
 	}
 }
-
 krsort($treeline);
 file_put_contents('poti/tree.log',$treeline, LOCK_EX);
 chmod('poti/tree.log',PERMISSION_FOR_LOG);
