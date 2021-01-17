@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.7 lot.210117
+//V0.8 lot.210117
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -108,10 +108,12 @@ if(!$logfiles_arr){
 arsort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
-	while($line =fgets($fp ,4096)){
+	while($line =fgets($fp)){
+		$line=mb_convert_encoding($line, "UTF-8", "sjis");
 		$line=	str_replace(",", "&#44;", $line);
 		$log[]=$line;//1スレッド分
 	}
+	fclose($fp);
 
 	$oya=[];
 	foreach($log as $i=>$val){//1スレッド分のログを処理
@@ -154,12 +156,12 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$oya[$no]=true;
 
 		}else{//スレッドの子
-			unset($no,$name,$now,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail,$ext,$time);
+			unset($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
 			list($no,$name,$now,$com,,$host,$email,$url)
 			=explode("\t",$val);
 			$time=preg_replace('/\(.+\)/', '', $now);
-			$time=strtotime($time).'000';
+			$time=strtotime($time)*1000;
 			$url=$url ? $http.$url :'';
 
 			if(!isset($newlog[$no])){//記事No重複回避 画像がある親優先
@@ -175,7 +177,6 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	$treeline[]=implode(",",$tree)."\n";
 	
 	unset($log,$tree,$oya);
-	fclose($fp);
 }
 //ツリーログ
 foreach($treeline as $val){
@@ -205,7 +206,6 @@ foreach($treeline as $i => $val){
 krsort($treeline);
 file_put_contents('poti/tree.log',$treeline, LOCK_EX);
 chmod('poti/tree.log',PERMISSION_FOR_LOG);
-$newlog=mb_convert_encoding($newlog, "UTF-8", "sjis");
 krsort($newlog);
 file_put_contents('poti/img.log',$newlog,LOCK_EX);
 chmod('poti/img.log',PERMISSION_FOR_LOG);
