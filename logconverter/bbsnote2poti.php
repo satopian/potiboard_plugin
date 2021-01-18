@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.8 lot.210117
+//V0.9 lot.210118
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -68,7 +68,7 @@ define('THUMB_Q', 92);//サムネイルのjpg劣化率
 //どちらにするか選んでください。
 $http='http://';//または 'https://'
 
-/* ------------- タイムゾーン ------------- */
+/* --------------- タイムゾーン --------------- */
 
 define('DEFAULT_TIMEZONE','Asia/Tokyo');
 
@@ -84,7 +84,7 @@ define('PERMISSION_FOR_POTI', 0705);//初期値 0705
 //画像や動画ファイルを保存するディレクトリのパーミッション
 define('PERMISSION_FOR_DIR', 0707);//初期値 0707
 
-/* ------------- ここから下設定項目なし ------------- */
+/* ----------- ここから下設定項目なし ----------- */
 
 $time_start = microtime(true);//計測開始
 
@@ -105,17 +105,21 @@ if(!$logfiles_arr){
 	exit;
 }
 
+$oya=[];
 arsort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp)){
 		$line=mb_convert_encoding($line, "UTF-8", "sjis");
-		$line=	str_replace(",", "&#44;", $line);
+		$arr_line=explode("\t",$line);
+		if(count($arr_line)>11){//スレッドの親?
+			$no=$arr_line[0];
+			$oya[$no]=true;
+		}
+		
 		$log[]=$line;//1スレッド分
 	}
 	fclose($fp);
-
-	$oya=[];
 	foreach($log as $i=>$val){//1スレッド分のログを処理
 
 		if($i===0){//スレッドの親
@@ -153,7 +157,6 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			$tree[]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
-			$oya[$no]=true;
 
 		}else{//スレッドの子
 			unset($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail);
@@ -164,7 +167,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$time=strtotime($time)*1000;
 			$url=$url ? $http.$url :'';
 
-			if(!isset($newlog[$no])){//記事No重複回避 画像がある親優先
+			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
 				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
 			}
 			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
@@ -176,8 +179,11 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	}
 	$treeline[]=implode(",",$tree)."\n";
 	
-	unset($log,$tree,$oya);
+	unset($log,$tree);
 }
+
+unset($oya);
+
 //ツリーログ
 foreach($treeline as $val){
 	list($_oya,)=explode(',',rtrim($val));
