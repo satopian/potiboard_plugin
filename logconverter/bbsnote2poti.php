@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.1 lot.210118
+//V0.9.2 lot.210118
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -111,6 +111,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp)){
 		$line=mb_convert_encoding($line, "UTF-8", "sjis");
+		$line = str_replace(",", "&#44;", $line);
 		$arr_line=explode("\t",$line);
 		if(count($arr_line)>11){//スレッドの親?
 			$no=$arr_line[0];
