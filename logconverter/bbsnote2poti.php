@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9 lot.210118
+//V0.9.1 lot.210118
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -154,7 +154,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			}
 
 			$url=$url ? $http.$url :'';
-			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 			$tree[]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
 
@@ -168,7 +168,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$url=$url ? $http.$url :'';
 
 			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
-				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,.\n";
+				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 			}
 			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
 				$tree[]=$no;
