@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.2 lot.210118
+//V0.9.5 lot.210119
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -45,11 +45,20 @@ $bbsnote_log_dir = 'data/';
 
 // $bbsnote_filehead_logs = 'MSG';//v7は、'MSG'
 $bbsnote_filehead_logs = 'LOG';//v8は'LOG'
+// $bbsnote_filehead_logs = 'pia';//v8は'LOG'
 
 //BBSNoteのログファイルの拡張子
 
 // $bbsnote_log_exe = 'log';//v7は、'log'
 $bbsnote_log_exe = 'cgi';//v8は'cgi'
+
+/* --------------- relmから変換 --------------- */
+
+// BBSNoteと仕様が近いrelmのログも変換できます。
+// relmが何なのかわからない方は変更しないでください。
+$relm=0; //relmのログを変換する時は 1 
+// $relm=1; でrelmから変換。 
+// デフォルト 0 
 
 /* -------------- サムネイル設定 -------------- */
 
@@ -112,25 +121,37 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	while($line =fgets($fp)){
 		$line=mb_convert_encoding($line, "UTF-8", "sjis");
 		$line = str_replace(",", "&#44;", $line);
-		$arr_line=explode("\t",$line);
-		if(count($arr_line)>11){//スレッドの親?
-			$no=$arr_line[0];
-			$oya[$no]=true;
+		if($relm){//relm
+			$arr_line=explode("<>",$line);
+			if(count($arr_line)>20){//スレッドの親?
+				$no=$arr_line[1];
+			}
+		}else{//BBSNote
+			$arr_line=explode("\t",$line);
+			if(count($arr_line)>11){//スレッドの親?
+				$no=$arr_line[0];
+			}
 		}
-		
+		$oya[$no]=true;
 		$log[]=$line;//1スレッド分
 	}
 	fclose($fp);
 	foreach($log as $i=>$val){//1スレッド分のログを処理
 
 		if($i===0){//スレッドの親
+			if($relm){
+			list($threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host,,,,,$agent,,$filename,$W,$H,,$thumbnail,$pch,,,$ptime,)
+				=explode("<>",$val);
+			}else{
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
-			=explode("\t",$val);
+				=explode("\t",$val);
+			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
+			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
+			}
+			$time=$time ? $time*1000 : 0; 
 
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
-			$time=preg_replace('/\(.+\)/', '', $now);//曜日除去
-			$time=strtotime($time)*1000;//strからUNIXタイムスタンプ
 
 			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
 			$pchext =  (in_array($pchext, ['pch', 'spch'])) ? $pchext : '';
@@ -154,18 +175,35 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$H=$thumbnail_size['h'];
 			}
 
+			$url = str_replace([" ","　","\t"],'',$url);
+			if(!$url||stripos('sage',$url)!==false||preg_match("/&lt;|</i",$url)){
+				$url="";
+			}
 			$url=$url ? $http.$url :'';
+
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 			$tree[]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
 
 		}else{//スレッドの子
-			unset($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,$pch,$ptime,$applet,$thumbnail);
+			unset($threadno,$no,$now,$name,$sub,$email,$url,$com,$time,$ip,$host,$agent,$filename,$W,$H,$ptime,$thumbnail,$pch,$applet);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
-			list($no,$name,$now,$com,,$host,$email,$url)
-			=explode("\t",$val);
-			$time=preg_replace('/\(.+\)/', '', $now);
-			$time=strtotime($time)*1000;
+			if($relm){
+				list($threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host)
+				=explode("<>",$val);
+				// $time=$time ? $time*1000 : 0; 
+			}else{
+				list($no,$name,$now,$com,,$host,$email,$url)
+				=explode("\t",$val);
+				$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
+				$time=(int)strtotime($time);//strからUNIXタイムスタンプ
+			}
+			$time=$time ? $time*1000 : 0; 
+
+			$url = str_replace([" ","　","\t"],'',$url);
+			if(!$url||stripos('sage',$url)!==false||preg_match("/&lt;|</i",$url)){
+				$url="";
+			}
 			$url=$url ? $http.$url :'';
 
 			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
@@ -178,9 +216,10 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 		}
 
 	}
+
 	$treeline[]=implode(",",$tree)."\n";
-	
 	unset($log,$tree);
+
 }
 
 unset($oya);
@@ -356,5 +395,4 @@ if($unlink_php_self){
 	chmod('bbsnote2poti.php',PERMISSION_FOR_DEST);
 	unlink('bbsnote2poti.php');
 }
-
 
