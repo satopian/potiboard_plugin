@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.5 lot.210119
+//V0.9.6 lot.210120
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -28,11 +28,6 @@
 //2021.1.15 さとぴあ
 
 /* ------------- 設定項目ここから ------------- */
-
-//変換が完了したらこのスクリプトを削除
-
-$unlink_php_self=0; //する 1 しない 0
-
 /* ------------- BBSNoteログ設定 ------------- */
 
 //BBSNoteのconfig.cgiの設定にあわせます。
@@ -45,7 +40,6 @@ $bbsnote_log_dir = 'data/';
 
 // $bbsnote_filehead_logs = 'MSG';//v7は、'MSG'
 $bbsnote_filehead_logs = 'LOG';//v8は'LOG'
-// $bbsnote_filehead_logs = 'pia';//v8は'LOG'
 
 //BBSNoteのログファイルの拡張子
 
@@ -55,7 +49,7 @@ $bbsnote_log_exe = 'cgi';//v8は'cgi'
 /* --------------- relmから変換 --------------- */
 
 // BBSNoteと仕様が近いrelmのログも変換できます。
-// relmが何なのかわからない方は変更しないでください。
+// relmが何かわからない方は変更しないでください。
 $relm=0; //relmのログを変換する時は 1 
 // $relm=1; でrelmから変換。 
 // デフォルト 0 
@@ -103,16 +97,82 @@ define('THUMB_DIR', 'poti/thumb/');
 
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
-check_poti ("poti");//変換されたログファイルが入るディレクトリ
-check_dir ("poti/src");//変換された画像が入るディレクトリ
-check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
+?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+	body {
+	margin: 1px 10.5px 1em;
+	padding: 2px 0;
+	line-height:3;
+	}
+	input[type="submit"]{
+	border: 1px #686868 solid;
+	background-color: #FFFFFE;
+	border-radius: 0;
+	margin: 1px;
+	padding:10px;
+	color: #555555;
+	}
+</style>
+<title>ログコンバータ</title>
+</head>
+<body>
+<?php
+$lets_convert=filter_input(INPUT_POST,'lets_convert',FILTER_VALIDATE_BOOLEAN);
+?>
+<?php if(!$lets_convert):?>
+<form action="./bbsnote2poti.php" method="post">
+<input type="hidden" name="lets_convert" value="true">
+<input type="submit" value="変換開始" class="paint_button">
+<label class="checkbox"><input type="checkbox" value="true" name="unlink_php_self" checked="">変換後このスクリプトを消す</label>
+</form>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+//送信ボタンを押した際に送信ボタンを無効化する（連打による多数送信回避）
+$(function(){
+$('[type="submit"]').click(function(){
+$(this).prop('disabled',true);//ボタンを無効化する
+$(this).closest('form').submit();//フォームを送信する
+});
+});
+</script>
+<?php endif;?>
+
+<?php
+$lets_convert=filter_input(INPUT_POST,'lets_convert',FILTER_VALIDATE_BOOLEAN);
+?>
+<?php if(!$lets_convert):?>
+	</body>
+</html>
+<?php endif;?>
+
+<?php
+$unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
+if(!$lets_convert){
+	exit;
+}
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 
 if(!$logfiles_arr){
 	echo'BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。';
 	exit;
 }
+?>
+<?php if(!$logfiles_arr):?>
+	</body>
+</html>
+<?php endif;?>
+
+<?php
+check_poti ("poti");//変換されたログファイルが入るディレクトリ
+check_dir ("poti/src");//変換された画像が入るディレクトリ
+check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
+
 
 $oya=[];
 arsort($logfiles_arr);
@@ -387,12 +447,14 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 return $thumbnail_size;
 
 }
-
-
 $time = microtime(true) - $time_start; echo "完了しました {$time} 秒";
 
 if($unlink_php_self){
 	chmod('bbsnote2poti.php',PERMISSION_FOR_DEST);
 	unlink('bbsnote2poti.php');
 }
+?>
+</body>
+</html>
+
 
