@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.9 lot.210121
+//V0.9.10 lot.210121
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -161,10 +161,10 @@ $password_is_matched=($pwd===$admin_pass);
 </html>
 <?php endif;?>
 <?php if($lets_convert && !$password_is_matched):?>
-		<?= 'パスワードが違います。';?>	
+		<?= 'パスワードが違います。';?>
+		</body>
+		</html>	
 <?php endif;?>
-	</body>
-</html>
 
 <?php
 	if(!$lets_convert || !$password_is_matched){
@@ -173,18 +173,11 @@ $password_is_matched=($pwd===$admin_pass);
 $unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 
-?>
-<?php if(!$logfiles_arr):?>
-	<?= 'BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。'; ?>
-	<?php endif;?>
-
-	</body>
-</html>
-
-<?php
 if(!$logfiles_arr){
+	echo "BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。\n</body>\n</html>\n";
 	exit;
 }
+	
 check_poti ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
@@ -198,11 +191,21 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 		$line = str_replace(",", "&#44;", $line);
 		if($relm){//relm
 			$arr_line=explode("<>",$line);
-			if(count($arr_line)>20){//スレッドの親?
+			$count_arr_line=count($arr_line);
+			if($count_arr_line<5){
+				echo"ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。\n</body>\n</html>\n";
+				exit;
+			}
+			if($count_arr_line>20){//スレッドの親?
 				$no=$arr_line[1];
 			}
 		}else{//BBSNote
 			$arr_line=explode("\t",$line);
+			$count_arr_line=count($arr_line);
+			if($count_arr_line<5){
+				echo"ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。\n</body>\n</html>\n";
+				exit;
+			}
 			if(count($arr_line)>11){//スレッドの親?
 				$no=$arr_line[0];
 			}
