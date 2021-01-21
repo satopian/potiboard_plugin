@@ -206,7 +206,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				echo"ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。\n</body>\n</html>\n";
 				exit;
 			}
-			if(count($arr_line)>11){//スレッドの親?
+			if($count_arr_line>11){//スレッドの親?
 				$no=$arr_line[0];
 			}
 		}
