@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.6 lot.210120
+//V0.9.9 lot.210121
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/
@@ -28,6 +28,12 @@
 //2021.1.15 さとぴあ
 
 /* ------------- 設定項目ここから ------------- */
+
+/* --------------- パスワード ---------------- */
+
+//管理者以外実行できないようにパスワードをセット
+$admin_pass='hoge';//必ず変更してください
+
 /* ------------- BBSNoteログ設定 ------------- */
 
 //BBSNoteのconfig.cgiの設定にあわせます。
@@ -108,8 +114,9 @@ date_default_timezone_set(DEFAULT_TIMEZONE);
 	margin: 1px 10.5px 1em;
 	padding: 2px 0;
 	line-height:3;
+	color:#626262;
 	}
-	input[type="submit"]{
+	input[type="text"],input[type="submit"]{
 	border: 1px #686868 solid;
 	background-color: #FFFFFE;
 	border-radius: 0;
@@ -126,6 +133,7 @@ $lets_convert=filter_input(INPUT_POST,'lets_convert',FILTER_VALIDATE_BOOLEAN);
 ?>
 <?php if(!$lets_convert):?>
 <form action="./bbsnote2poti.php" method="post">
+パスワード : <input type="password" name="pwd" value=""><br>
 <input type="hidden" name="lets_convert" value="true">
 <input type="submit" value="変換開始" class="paint_button">
 <label class="checkbox"><input type="checkbox" value="true" name="unlink_php_self" checked="">変換後このスクリプトを消す</label>
@@ -145,34 +153,41 @@ $(this).closest('form').submit();//フォームを送信する
 
 <?php
 $lets_convert=filter_input(INPUT_POST,'lets_convert',FILTER_VALIDATE_BOOLEAN);
+$pwd=filter_input(INPUT_POST,'pwd',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$password_is_matched=($pwd===$admin_pass);
 ?>
 <?php if(!$lets_convert):?>
 	</body>
 </html>
 <?php endif;?>
-
-<?php
-$unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
-if(!$lets_convert){
-	exit;
-}
-$logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
-
-if(!$logfiles_arr){
-	echo'BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。';
-	exit;
-}
-?>
-<?php if(!$logfiles_arr):?>
+<?php if($lets_convert && !$password_is_matched):?>
+		<?= 'パスワードが違います。';?>	
+<?php endif;?>
 	</body>
 </html>
-<?php endif;?>
 
 <?php
+	if(!$lets_convert || !$password_is_matched){
+		exit;
+	}
+$unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
+$logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
+
+?>
+<?php if(!$logfiles_arr):?>
+	<?= 'BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。'; ?>
+	<?php endif;?>
+
+	</body>
+</html>
+
+<?php
+if(!$logfiles_arr){
+	exit;
+}
 check_poti ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
-
 
 $oya=[];
 arsort($logfiles_arr);
