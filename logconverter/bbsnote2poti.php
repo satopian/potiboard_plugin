@@ -1,9 +1,9 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.10 lot.210121
+//V0.9.11 lot.210122
 //(c)さとぴあ 2021
 //
-//https://pbbs.sakura.ne.jp/
+//https://pbbs.sakura.ne.jp/	
 
 //免責
 //正常に動作する事を期待して作成していますが、なんらかの問題が発生しても作者は一切の責任を負いません。
@@ -56,6 +56,7 @@ $bbsnote_log_exe = 'cgi';//v8は'cgi'
 
 // BBSNoteと仕様が近いrelmのログも変換できます。
 // relmが何かわからない方は変更しないでください。
+
 $relm=0; //relmのログを変換する時は 1 
 // $relm=1; でrelmから変換。 
 // デフォルト 0 
@@ -149,27 +150,20 @@ $(this).closest('form').submit();//フォームを送信する
 });
 });
 </script>
-<?php endif;?>
-
-<?php
-$lets_convert=filter_input(INPUT_POST,'lets_convert',FILTER_VALIDATE_BOOLEAN);
-$pwd=filter_input(INPUT_POST,'pwd',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$password_is_matched=($pwd===$admin_pass);
-?>
-<?php if(!$lets_convert):?>
-	</body>
+</body>
 </html>
 <?php endif;?>
-<?php if($lets_convert && !$password_is_matched):?>
-		<?= 'パスワードが違います。';?>
-		</body>
-		</html>	
-<?php endif;?>
 
 <?php
-	if(!$lets_convert || !$password_is_matched){
-		exit;
-	}
+$pwd=filter_input(INPUT_POST,'pwd',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$password_is_matched=($pwd===$admin_pass);
+
+if($lets_convert && !$password_is_matched){
+	echo "パスワードが違います。\n</body>\n</html>\n";
+}
+if(!$lets_convert || !$password_is_matched){
+	exit;
+}
 $unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 
@@ -217,17 +211,17 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	foreach($log as $i=>$val){//1スレッド分のログを処理
 
 		if($i===0){//スレッドの親
-			if($relm){
+			if($relm){//relm
 			list($threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host,,,,,$agent,,$filename,$W,$H,,$thumbnail,$pch,,,$ptime,)
 				=explode("<>",$val);
-			}else{
+			}else{//BBSNote
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
 				=explode("\t",$val);
 			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
-			$time=$time ? $time*1000 : 0; 
 
+			$time=$time ? $time*1000 : 0; 
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
 
@@ -266,18 +260,17 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 		}else{//スレッドの子
 			unset($threadno,$no,$now,$name,$sub,$email,$url,$com,$time,$ip,$host,$agent,$filename,$W,$H,$ptime,$thumbnail,$pch,$applet);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
-			if($relm){
+			if($relm){//relm
 				list($threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host)
 				=explode("<>",$val);
-				// $time=$time ? $time*1000 : 0; 
-			}else{
+			}else{//BBSNote
 				list($no,$name,$now,$com,,$host,$email,$url)
 				=explode("\t",$val);
 				$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 				$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
-			$time=$time ? $time*1000 : 0; 
 
+			$time=$time ? $time*1000 : 0; 
 			$url = str_replace([" ","　","\t"],'',$url);
 			if(!$url||stripos('sage',$url)!==false||preg_match("/&lt;|</i",$url)){
 				$url="";
@@ -306,7 +299,6 @@ unset($oya);
 foreach($treeline as $val){
 	list($_oya,)=explode(',',rtrim($val));
 	$_treeline[$_oya]=$val;
-	$arr_oya[]=$_oya;
 }
 $treeline=$_treeline;
 ksort($treeline);
@@ -316,7 +308,7 @@ foreach($treeline as $i => $val){
 
 	unset($ko[0]);
 	foreach($ko as $k =>$v){
-		if(in_array($v,$arr_oya)){
+		if(isset($treeline[$v])){
 			unset($ko[$k]);
 			$_ko=implode(",",$ko);
 			if($_ko){
