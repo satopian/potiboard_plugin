@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.11 lot.210122
+//V0.9.12 lot.210125
 //(c)さとぴあ 2021
 //
 //https://pbbs.sakura.ne.jp/	
@@ -96,13 +96,13 @@ define('PERMISSION_FOR_DIR', 0707);//初期値 0707
 
 /* ----------- ここから下設定項目なし ----------- */
 
-$time_start = microtime(true);//計測開始
 
 //サムネイル
 define('RE_SAMPLED', 1);
 define('THUMB_DIR', 'poti/thumb/');
 
 date_default_timezone_set(DEFAULT_TIMEZONE);
+$time_start = microtime(true);//計測開始
 
 ?>
 <!DOCTYPE html>
@@ -171,6 +171,11 @@ if(!$logfiles_arr){
 	echo "BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。\n</body>\n</html>\n";
 	exit;
 }
+
+echo"変換開始<br>";
+ob_flush();
+flush();
+sleep( 1 );
 	
 check_poti ("poti");//変換されたログファイルが入るディレクトリ
 check_dir ("poti/src");//変換された画像が入るディレクトリ
