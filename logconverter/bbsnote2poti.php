@@ -102,7 +102,6 @@ define('RE_SAMPLED', 1);
 define('THUMB_DIR', 'poti/thumb/');
 
 date_default_timezone_set(DEFAULT_TIMEZONE);
-$time_start = microtime(true);//計測開始
 
 ?>
 <!DOCTYPE html>
@@ -171,6 +170,7 @@ if(!$logfiles_arr){
 	echo "BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。\n</body>\n</html>\n";
 	exit;
 }
+$time_start = microtime(true);//計測開始
 
 echo"変換開始<br>";
 ob_flush();
