@@ -10,7 +10,7 @@ BBSNoteのログファイルのバックアップをお願いします。消失�
 ## ダウンロード
 
 [https://github.com/satopian/potiboard_plugin](https://github.com/satopian/potiboard_plugin)の緑色のボタンからzipファイルを入手して展開します。  
-その中の`logconverter`フォルダの中にある｀bbsnote2poti.php｀を取り出して使います。 
+その中の`logconverter`フォルダの中にある `bbsnote2poti.php｀を取り出して使います。 
 
 ## ログファイルの変換方法
 
