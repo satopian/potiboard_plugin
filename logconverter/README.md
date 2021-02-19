@@ -14,7 +14,9 @@ BBSNoteのログファイルのバックアップをお願いします。消失�
 
 ## ログファイルの変換方法
 
-BBSNoteのログファイルが入っている`data`フォルダを用意します。
+BBSNoteのログファイルが入っている`data`フォルダを用意します。  
+![image](https://user-images.githubusercontent.com/44894014/108525797-d4ff3500-7313-11eb-9ec7-8c39fa253cd0.png)
+
 `bbsnote2poti.php`を図のように配置します。
 
 ## ローカルサーバで実行
