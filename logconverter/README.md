@@ -61,15 +61,22 @@ POTI-board形式に画像のファイル名を変換するときに、ログの�
 完了すると、  
 `完了しました`という表示がでます。
 
+![image](https://user-images.githubusercontent.com/44894014/108527147-48ee0d00-7315-11eb-9bc5-d346def0bdd3.png)
+![image](https://user-images.githubusercontent.com/44894014/108527173-50151b00-7315-11eb-8ba3-5c156db0223d.png)
+![image](https://user-images.githubusercontent.com/44894014/108527184-56a39280-7315-11eb-95bf-d076ab287316.png)
+
 ### 新規設置したPOTI-boardにログファイルを移動
 
-potiフォルダにPOTI-board形式のログファイル一式ができます。
+`poti`フォルダにPOTI-board形式のログファイル一式ができます。
 図のようなファイルがフォルダに入っていると思います。
+
+![image](https://user-images.githubusercontent.com/44894014/108527216-602cfa80-7315-11eb-8680-5e997c4a05e7.png)
+![image](https://user-images.githubusercontent.com/44894014/108527205-5c00dd00-7315-11eb-8192-44e93e3542a7.png)
 
 しかし、そのファイルの取り扱いには注意が必要です。  
 `img.log`に書き込んだ内容が入り、`tree.log`にスレッドのツリーの構造が入っています。  
 POTI-boardのログファイルはこの2つしかないので、すでに運用中のPOTI-boardにこの2つのログファイルを上書きすると、これまでのすべての投稿が消えてなくなります。  
-したがって、この変換したログファイルは、新しく設置したまだ何も投稿していないPOTI-boardにしか使えません。
+したがって、この変換したログファイルは、新しく設置したまだ何も投稿していないPOTI-boardにしか使えません。  
 BBSNoteやPOTI-boardのログファイルが消えてしまっても、何もできませんので、消えてしまうと困るものはバックアップしてください。  
 よろしくお願いいたします。
 
