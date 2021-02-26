@@ -1,7 +1,4 @@
-# potiboard_plugin
-お絵かき掲示板 POTI-boardのための外部phpプログラムです。
-
-## newimg.php
+# POTI-boardの最新画像をサイトの入り口のHTMLファイルに呼び出すphp
 
 [お絵かき掲示板](https://pbbs.sakura.ne.jp/)交流サイトで使っている新着画像表示プログラムを一般配布用にカスタマイズしたものです。
 
