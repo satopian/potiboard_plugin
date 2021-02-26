@@ -5,6 +5,12 @@
 
 [お絵かき掲示板](https://pbbs.sakura.ne.jp/)交流サイトで使っている新着画像表示プログラムを一般配布用にカスタマイズしたものです。
 
+## ダウンロード
+
+[このリポジトリのトップページ](https://github.com/satopian/potiboard_plugin)の緑色のボタンからzipファイルを入手して展開します。  
+その中の`newimage`フォルダの中にある `newimg.php` を取り出して使います。 
+
+
 ### 特徴
 
 POTI-boardに投稿された一番新しい画像を取得して静的HTMLファイルに表示します。
@@ -21,8 +27,8 @@ potiboard.phpと同じディレクトリにアップロードします。
 画像と同じようにこのphpのファイルをimgタグで呼び出します。
 
 HTMLファイルに
-&lt;img src=&quot;https://hoge.ne.jp/bbs/newimg.php&quot; alt=&quot;&quot; width=&quot;300&quot;&gt;
-のように書きます。
+`<img src="https://hoge.ne.jp/bbs/newimg.php" alt="" width="300">;`
+のように書いて画像として呼び出します。
 
 画像が無い時にデフォルト画像を表示させる事もできます。
 
