@@ -27,7 +27,7 @@ potiboard.phpと同じディレクトリにアップロードします。
 画像と同じようにこのphpのファイルをimgタグで呼び出します。
 
 HTMLファイルに
-`<img src="https://hoge.ne.jp/bbs/newimg.php" alt="" width="300">;`
+`<img src="https://example.com/bbs/newimg.php" alt="" width="300">`
 のように書いて画像として呼び出します。
 
 画像が無い時にデフォルト画像を表示させる事もできます。
