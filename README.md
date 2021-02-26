@@ -15,6 +15,14 @@ POTI-boardに投稿された一番新しい画像を取得して静的HTMLファ
 [newimage.php](https://github.com/satopian/potiboard_plugin/tree/master/newimage)
 の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/newimage)。
 
+## bbsnote2poti.php
+
+### 特徴
+
+BBSNoteやrelmのログファイルをPOTI-boardに変換します。  
+[bbsnote2poti.php](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)
+の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)。
+
 ## search.php
 
 ### 特徴
@@ -36,6 +44,8 @@ POTI-boardに検索機能を追加します。
 このプログラムを利用した事によって発生したいかなる損害も作者は一切の責任を負いません。
 
 ## 履歴
+#### [2021/01/07] bbsnote2poti.php lot.210107
+GitHubに公開
 #### [2020/07/13] search.php lot.200713
 GitHubに公開
 #### [2020/05/19] newimg.php lot.200519
