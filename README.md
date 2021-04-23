@@ -29,7 +29,7 @@ POTI-boardに検索機能を追加します。
 
 ### 特徴
 
-BBSNoteやrelmのログファイルをPOTI-boardに変換します。  
+BBSNoteやrelmのログファイルをPOTI-board形式に変換します。  
 [bbsnote2poti.php](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)
 の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)。
 
