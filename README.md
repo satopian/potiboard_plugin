@@ -3,7 +3,7 @@
 
 [お絵かき掲示板](https://pbbs.sakura.ne.jp/)交流サイトで使っている新着画像表示プログラムを一般配布用にカスタマイズしました。
 
-newimg.phpとsearch.php、2つのプラグインがあります。
+newimg.php、search.phpそしてbbsnote2poti.php、3つのプラグインがあります。
 
 ## newimg.php
 
@@ -15,14 +15,6 @@ POTI-boardに投稿された一番新しい画像を取得して静的HTMLファ
 [newimage.php](https://github.com/satopian/potiboard_plugin/tree/master/newimage)
 の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/newimage)。
 
-## bbsnote2poti.php
-
-### 特徴
-
-BBSNoteやrelmのログファイルをPOTI-boardに変換します。  
-[bbsnote2poti.php](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)
-の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)。
-
 ## search.php
 
 ### 特徴
@@ -32,6 +24,14 @@ POTI-boardに検索機能を追加します。
 
 [search.php](https://github.com/satopian/potiboard_plugin/tree/master/search)
 の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/search)。
+
+## bbsnote2poti.php
+
+### 特徴
+
+BBSNoteやrelmのログファイルをPOTI-board形式に変換します。  
+[bbsnote2poti.php](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)
+の[設置方法や使用方法はこちら](https://github.com/satopian/potiboard_plugin/tree/master/logconverter)。
 
 ## やこうさんパレット(お絵かきーずパレット)
 
