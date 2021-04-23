@@ -1,6 +1,6 @@
 <?php
 // POTI-boardの最新画像をサイトの入り口のHTMLファイルに呼び出すphp
-// newimg.php(c)さとぴあ 2020-2021 lot.210226
+// newimg.php(c)さとぴあ 2020-2021 lot.210421
 // https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
 
@@ -20,7 +20,7 @@
 // 画像がない時に表示する画像を指定
 $default='';
 //例
-// $default='https://hoge.ne.jp/image.png';
+// $default='https://example.com/bbs/image.png';
 //設定しないなら初期値の
 // $default='';
 //で。
