@@ -1,6 +1,6 @@
 # BBSNote → POTI-board ログコンバータ
-BBSNote v7またはv8のログファイルをPOTI-boardで使える形式に変換します。  
-relmのログもPOTI-board形式に変換します。
+BBSNote v7またはv8のログファイルからPOTI-boardのログファイルを作ります。  
+relmのログもPOTI-board形式に変換できます。
 
 ## 免責
 何らかの損害が発生しても作者は一切の責任を負いません。
