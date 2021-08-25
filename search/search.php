@@ -1,6 +1,6 @@
 <?php
-//POTI-board plugin search(c)2020-2021 さとぴあ
-//v1.6.8 lot.210310
+//POTI-board plugin search(C)2020-2021 さとぴあ(@satopian)
+//v1.7.1 lot.210825
 //
 //https://pbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
@@ -29,6 +29,9 @@ $max_search=120;
 
 //更新履歴
 
+//v1.7.1 2021.08.25 ツリーの照合方式を変更。config.phpで設定したタイムゾーンが反映されるようにした。
+//v1.7.0 2021.07.07 v3.03.1 対応。マークダウン記法による自動リンクの文字部分だけを表示。出力時のエスケープ処理追加。
+//v1.6.9 2021.03.10 ２重エンコードにならないようにした。
 //v1.6.8 2021.03.10 未定義エラーを修正。
 //v1.6.6 2021.01.17 PHP8環境で致命的エラーが出るバグを修正。1発言分のログが4096バイト以上の時に処理できなくなるバグを修正。
 //v1.6.5 2020.10.02 波ダッシュと全角チルダを区別しない。
@@ -59,7 +62,12 @@ defined('SKIN_DIR') or define('SKIN_DIR','theme/');//config.php で未定義な�
 $dat['skindir']=SKIN_DIR;
 
 //タイムゾーン
-date_default_timezone_set('Asia/Tokyo');
+defined('DEFAULT_TIMEZONE') or define('DEFAULT_TIMEZONE','Asia/Tokyo');
+date_default_timezone_set(DEFAULT_TIMEZONE);
+
+//マークダウン記法のリンクをHTMLに する:1 しない:0
+defined('MD_LINK') or define('MD_LINK', '0');
+
 //filter_input
 
 $imgsearch=filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
@@ -67,10 +75,10 @@ $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $page= $page ? $page : 1;
 $query=filter_input(INPUT_GET,'query');
 $query=urldecode($query);
-$query=htmlspecialchars($query,ENT_QUOTES,'utf-8');
 $query=mb_convert_kana($query, 'rn', 'UTF-8');
 $query=str_replace(array(" ", "　"), "", $query);
 $query=str_replace("〜","～",$query);//波ダッシュを全角チルダに
+$query=h($query);
 $radio =filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 
 if($imgsearch){
@@ -82,12 +90,23 @@ else{
 
 //ログの読み込み
 $i=0;$j=0;
-$arr=array();
-// $files=array();
+$arr=[];
 $tree=file(TREEFILE);
+$oya = [];
+foreach ($tree as $line) {
+	$tree_nos = explode(',', trim($line));
+	foreach ($tree_nos as $tree_no) {
+		$oya[$tree_no] = $tree_nos[0]; //キーにres no、値にoya no
+	}
+}
+
 $fp = fopen(LOGFILE, "r");
 while ($line = fgets($fp)) {
 	list($no,,$name,,$sub,$com,,,,$ext,,,$time,,,) = explode(",", $line);
+	if(!isset($oya[$no])){
+		continue;
+	}
+
 	$continue_to_search=true;
 	if($imgsearch){//画像検索の場合
 		$continue_to_search=($ext&&is_file(IMG_DIR.$time.$ext));//画像があったら
@@ -116,19 +135,10 @@ while ($line = fgets($fp)) {
 				$query!==''&&($radio===2&&$s_name===$query)//作者名完全一致
 		){
 			$link='';
-			foreach($tree as $treeline){
-				$treeline=','.rtrim($treeline).',';//行の両端にコンマを追加
-				if(strpos($treeline,','.$no.',')!==false){
-					$treenos=explode(",",$treeline);
-					$no=$treenos[1];//スレッドの親
-						$link=PHP_SELF.'?res='.$no;
-						$arr[]=compact('no','name','sub','com','ext','time','link');
-						++$i;
-					break;
-				}
-			}
-				
-	}
+			$link=PHP_SELF.'?res='.$oya[$no];
+			$arr[]=compact('no','name','sub','com','ext','time','link');
+			++$i;
+		}
 			if($i>=$max_search){break;}//1掲示板あたりの最大検索数
 		
 	}
@@ -157,11 +167,14 @@ if($arr){
 
 			$time=(int)substr($time,-13,10);
 			$postedtime =$time ? (date("Y/m/d G:i", $time)) : '';
-			$sub=strip_tags($sub);
+			$sub=h(strip_tags($sub));
 			$com=str_replace('<br />',' ',$com);
-			$com=strip_tags($com);
+			if(MD_LINK){
+				$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$com);
+			}
+			$com=h(strip_tags($com));
 			$com=mb_strcut($com,0,180);
-			$name=strip_tags($name);
+			$name=h(strip_tags($name));
 			$encoded_name=urlencode($name);
 			//変数格納
 			$dat['comments'][]= compact('no','name','encoded_name','sub','img','com','link','postedtime');
@@ -187,7 +200,7 @@ else{
 }
 
 //クエリを検索窓に入ったままにする
-$dat['query']=$query;
+$dat['query']=h($query);
 //ラジオボタンのチェック
 $dat['radio_chk1']='';//作者名
 $dat['radio_chk2']='';//完全一致
@@ -211,7 +224,7 @@ else{//作者名
 }
 $dat['query_l']=$query_l;
 
-$dat['page']=$page;
+$dat['page']=(int)$page;
 
 $dat['img_or_com']=$img_or_com;
 $dat['pageno']='';
@@ -266,6 +279,11 @@ if($arr){
 }
 
 unset($arr);
+
+function h($str){
+	return htmlspecialchars($str,ENT_QUOTES,'utf-8',false);
+}
+
 //HTML出力
 $Skinny->SkinnyDisplay(SKIN_DIR.'search.html', $dat );
 
