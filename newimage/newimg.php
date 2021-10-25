@@ -1,7 +1,7 @@
 <?php
 // POTI-boardの最新画像をサイトの入り口のHTMLファイルに呼び出すphp
 // newimg.php(c)さとぴあ 2020-2021 lot.210421
-// https://pbbs.sakura.ne.jp/
+// https://paintbbs.sakura.ne.jp/
 //フリーウェアですが著作権は放棄しません。
 
 // 使い方

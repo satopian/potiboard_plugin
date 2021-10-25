@@ -81,5 +81,5 @@ BBSNoteやPOTI-boardのログファイルが消えてしまっても、何もで
 よろしくお願いいたします。
 
 ### サポート
-[Issues](https://github.com/satopian/potiboard_plugin/issues)または、[POTI改 設置サポート掲示板](https://pbbs.sakura.ne.jp/cgi/neosample/support/)をご利用ください。  
+[Issues](https://github.com/satopian/potiboard_plugin/issues)または、[POTI改 設置サポート掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/support/)をご利用ください。  
 
