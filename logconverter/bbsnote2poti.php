@@ -1,6 +1,6 @@
 <?php
 //BBSNote → POTI-board ログ変換ツール
-//V0.9.16 lot.210130
+//V0.9.18 lot.211230
 //(c)さとぴあ 2021
 //
 //https://paintbbs.sakura.ne.jp/	
@@ -91,6 +91,10 @@ define('THUMB_Q', 92);//サムネイルのjpg劣化率
 //どちらにするか選んでください。
 $http='http://';//または 'https://'
 
+/* ----------------- 題名が空欄の時 ----------------- */
+
+$defalt_subject = '無題';
+
 /* --------------- タイムゾーン --------------- */
 
 define('DEFAULT_TIMEZONE','Asia/Tokyo');
@@ -171,7 +175,7 @@ $pwd=filter_input(INPUT_POST,'pwd',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $password_is_matched=($pwd===$admin_pass);
 
 if($lets_convert && !$password_is_matched){
-	echo "パスワードが違います。\n</body>\n</html>\n";
+	error('パスワードが違います。');
 }
 if(!$lets_convert || !$password_is_matched){
 	exit;
@@ -180,8 +184,7 @@ $unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLE
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
 
 if(!$logfiles_arr){
-	echo "BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。\n</body>\n</html>\n";
-	exit;
+	error('BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。');
 }
 $time_start = microtime(true);//計測開始
 
@@ -205,8 +208,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$arr_line=explode("<>",$line);
 			$count_arr_line=count($arr_line);
 			if($count_arr_line<5){
-				echo"ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。\n</body>\n</html>\n";
-				exit;
+				error('ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。');
 			}
 			if($count_arr_line>20){//スレッドの親?
 				$no=$arr_line[1];
@@ -215,8 +217,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$arr_line=explode("\t",$line);
 			$count_arr_line=count($arr_line);
 			if($count_arr_line<5){
-				echo"ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。\n</body>\n</html>\n";
-				exit;
+				error('ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。');
 			}
 			if($count_arr_line>11){//スレッドの親?
 				$no=$arr_line[0];
@@ -270,6 +271,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$url="";
 			}
 			$url=$url ? $http.$url :'';
+			$sub = $sub ? $sub : $defalt_subject;
 
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 			$tree[]=$no;
@@ -483,4 +485,13 @@ if($unlink_php_self){
 </body>
 </html>
 
-
+<?php
+function error($str) {
+?>
+<?=htmlspecialchars($str,ENT_QUOTES,"utf-8",false)?><br>
+</body>
+</html>
+<?php
+exit;
+}
+?>
