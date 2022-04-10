@@ -1,7 +1,8 @@
 <?php
-//BBSNote → POTI-board ログ変換ツール
-//V0.9.18 lot.211230
-//(c)さとぴあ 2021
+// BBSNote → POTI-board ログ変換ツール
+// V0.9.19 lot.220410
+// (c)2022 さとぴあ(satopian) 
+// Licence MIT
 //
 //https://paintbbs.sakura.ne.jp/	
 
@@ -452,6 +453,10 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 	$nottrue = 0;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
+		if(function_exists("ImageColorAlLocate") && function_exists("imagefill")){
+			$background = ImageColorAlLocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
+			imagefill($im_out, 0, 0, $background);
+		}
 		// コピー＆再サンプリング＆縮小
 		if(function_exists("ImageCopyResampled")&&RE_SAMPLED){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
