@@ -1,6 +1,6 @@
 <?php
 // BBSNote → POTI-board ログ変換ツール
-// V0.9.19 lot.220410
+// V0.9.20 lot.220507
 // (c)2022 さとぴあ(satopian) 
 // Licence MIT
 //
@@ -203,6 +203,9 @@ arsort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp)){
+		if(!trim($line)){
+			continue;
+		}
 		$line=mb_convert_encoding($line, "UTF-8", "sjis");
 		$line = str_replace(",", "&#44;", $line);
 		if($relm){//relm
