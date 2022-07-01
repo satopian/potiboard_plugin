@@ -50,8 +50,8 @@ $bbsnote_filehead_logs = 'LOG';//v8は'LOG'
 
 //BBSNoteのログファイルの拡張子
 
-// $bbsnote_log_exe = 'log';//v7は、'log'
-$bbsnote_log_exe = 'cgi';//v8は'cgi'
+// $bbsnote_log_ext = 'log';//v7は、'log'
+$bbsnote_log_ext = 'cgi';//v8は'cgi'
 
 /* --------------- relmから変換 --------------- */
 
@@ -182,7 +182,7 @@ if(!$lets_convert || !$password_is_matched){
 	exit;
 }
 $unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
-$logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_exe.'}', GLOB_BRACE));//ログファイルをglob
+$logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_ext.'}', GLOB_BRACE));//ログファイルをglob
 
 if(!$logfiles_arr){
 	error('BBSNoteのログファイルの読み込みに失敗しました。BBSNoteのログファイルの頭文字や拡張子の設定が間違っている可能性があります。');
