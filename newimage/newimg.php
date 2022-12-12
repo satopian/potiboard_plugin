@@ -34,6 +34,8 @@ $fp = fopen(LOGFILE, "r");//ログを開く
 	$i=0;
 	while ($line = fgets($fp ,4096)) {
 		list($no,,,,,,,,,$ext,,,$time,) = explode(",", $line);
+		$time=basename($time);
+		$ext=basename($ext);
 		if ($ext&&is_file(IMG_DIR.$time.$ext)){
 			foreach($tree as $treeline){
 				$treeline=','.rtrim($treeline).',';//行の両端にコンマを追加

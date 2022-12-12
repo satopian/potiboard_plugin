@@ -248,7 +248,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
 
-			$ext = (!in_array($ext, ['.pch', '.spch'])) ? $ext : ''; 
+			$ext = (!in_array($ext, ['.pch', '.spch'])) ? basename($ext) : ''; 
 			$pchext =  (in_array($pchext, ['pch', 'spch'])) ? $pchext : '';
 			$is_img=false;
 			//POTI-board形式のファイル名に変更してコピー
