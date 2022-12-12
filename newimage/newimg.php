@@ -81,4 +81,4 @@ switch ($img_type):
 	endswitch;
 		
 readfile($filename);
-?>
+
