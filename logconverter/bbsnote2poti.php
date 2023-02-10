@@ -1,7 +1,7 @@
 <?php
 // BBSNote → POTI-board ログ変換ツール
-// V0.9.20 lot.220507
-// (c)2022 さとぴあ(satopian) 
+// V0.9.21 lot.230210
+// (c)2022-2023 さとぴあ(satopian) 
 // Licence MIT
 //
 //https://paintbbs.sakura.ne.jp/	
@@ -239,7 +239,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				=explode("<>",$val);
 			}else{//BBSNote
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
-				=explode("\t",$val);
+				=explode("\t",$val."\t");
 			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
@@ -268,6 +268,8 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			if($usethumb&&$is_img&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
 				$W=$thumbnail_size['w'];
 				$H=$thumbnail_size['h'];
+			}else{
+				list($W,$H)=getimagesize("poti/src/{$time}{$ext}");
 			}
 
 			$url = str_replace([" ","　","\t"],'',$url);
@@ -276,7 +278,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			}
 			$url=$url ? $http.$url :'';
 			$sub = $sub ? $sub : $defalt_subject;
-
+			$no=(int)$no;
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 			$tree[]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
@@ -300,7 +302,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$url="";
 			}
 			$url=$url ? $http.$url :'';
-
+			$no=(int)$no;
 			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
 				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 				$tree[]=$no;
