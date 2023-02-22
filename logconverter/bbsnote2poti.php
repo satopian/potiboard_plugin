@@ -318,7 +318,6 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	unset($log,$tree);
 
 }
-var_dump($oya);
 unset($oya);
 
 //ツリーログ
