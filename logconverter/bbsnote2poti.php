@@ -1,6 +1,6 @@
 <?php
 // BBSNote → POTI-board ログ変換ツール
-// V0.9.21 lot.230210
+// V0.9.23 lot.230222
 // (c)2022-2023 さとぴあ(satopian) 
 // Licence MIT
 //
@@ -203,6 +203,7 @@ arsort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp)){
+		$_no=null;
 		if(!trim($line)){
 			continue;
 		}
@@ -215,7 +216,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				error('ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。');
 			}
 			if($count_arr_line>20){//スレッドの親?
-				$no=$arr_line[1];
+				$_no=$arr_line[1];
 			}
 		}else{//BBSNote
 			$arr_line=explode("\t",$line);
@@ -224,10 +225,11 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				error('ログファイルの読み込みに失敗しました。設定が間違っている可能性があります。');
 			}
 			if($count_arr_line>11){//スレッドの親?
-				$no=$arr_line[0];
+				$_no=$arr_line[0];
 			}
 		}
-		$oya[$no]=true;
+		$_no= isset($_no) ? (int)$_no+1 : null;
+		$oya[$_no]= true ;
 		$log[]=$line;//1スレッド分
 	}
 	fclose($fp);
@@ -243,7 +245,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
-
+			$no=(int)$no+1;//記事番号0を回避
 			$time=$time ? $time*1000 : 0; 
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
@@ -295,6 +297,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 				$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
+			$no=(int)$no+1;//記事番号0を回避
 
 			$time=$time ? $time*1000 : 0; 
 			$url = str_replace([" ","　","\t"],'',$url);
@@ -302,7 +305,6 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$url="";
 			}
 			$url=$url ? $http.$url :'';
-			$no=(int)$no;
 			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
 				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
 				$tree[]=$no;
@@ -316,7 +318,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 	unset($log,$tree);
 
 }
-
+var_dump($oya);
 unset($oya);
 
 //ツリーログ
