@@ -62,7 +62,14 @@ $relm=0; //relmのログを変換する時は 1
 // $relm=1; でrelmから変換。 
 // デフォルト 0 
 
+/* ------------- 記事番号の降り直し -------------- */
+//記事番号を通し番号で計算しなおして番号を振りなおします。
+$renumbering = 0; // 1.する 0.しない
+
+// 0.しない の時は、BBSNoteのログファイルに記述されている記事番号を使用します。
+// 1.する の時はNO.1から始まる記事場号を通し番号として降り直します。
 /* ------------- 画像ファイル名 -------------- */
+
 
 //同じファイル名の画像が出力先にあるときは別名で保存
 $save_at_synonym=0;// 1.する 0.しない
@@ -198,9 +205,12 @@ check_poti ("poti");//変換されたログファイルが入るディレクト�
 check_dir ("poti/src");//変換された画像が入るディレクトリ
 check_dir ("poti/thumb");//変換されたサムネイルが入るディレクトリ
 
+sort($logfiles_arr);
+$__no=1;
 $oya=[];
-arsort($logfiles_arr);
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
+	$arr_logs=[];
+	$tree=[];
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp)){
 		$_no=null;
@@ -233,7 +243,8 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 		$log[]=$line;//1スレッド分
 	}
 	fclose($fp);
-	foreach($log as $i=>$val){//1スレッド分のログを処理
+	$arr_logs=array_values($arr_logs);
+	foreach($arr_logs as $i=>$val){//1スレッド分のログを処理
 
 		if($i===0){//スレッドの親
 			if($relm){//relm
@@ -241,37 +252,35 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				=explode("<>",$val);
 			}else{//BBSNote
 			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
-				=explode("\t",$val."\t");
+			=explode("\t",$val."\t"."\t"."\t"."\t"."\t"."\t"."\t"."\t"."\t");
 			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
-			$no=(int)$no+1;//記事番号0を回避
-			$time=$time ? $time*1000 : 0; 
+			$no= $renumbering ? $__no : (int)$no+1;//記事番号0を回避
+			$time=$time ? $time.'000' : 0; 
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
 
 			$ext = (!in_array($ext, ['.pch', '.spch'])) ? basename($ext) : ''; 
 			$pchext =  (in_array($pchext, ['pch', 'spch'])) ? $pchext : '';
-			$is_img=false;
 			//POTI-board形式のファイル名に変更してコピー
 			if($ext && is_file("data/$filename")){//画像
 				if($save_at_synonym && is_file("poti/src/{$time}{$ext}")){
 						$time=$time+1;
 				}
-				$is_img=true;	
 				copy("data/$filename","poti/src/{$time}{$ext}");
 				chmod("poti/src/{$time}{$ext}",PERMISSION_FOR_DEST);
-			}
+				if($usethumb&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
+					$W=$thumbnail_size['w'];
+					$H=$thumbnail_size['h'];
+				}else{
+					list($W,$H)=getimagesize("poti/src/{$time}{$ext}");
+				}
+				}
 
 			if($pchext && is_file("data/$pch")){//動画
 				copy("data/$pch","poti/src/$time.$pchext");
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
-			}
-			if($usethumb&&$is_img&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
-				$W=$thumbnail_size['w'];
-				$H=$thumbnail_size['h'];
-			}else{
-				list($W,$H)=getimagesize("poti/src/{$time}{$ext}");
 			}
 
 			$url = str_replace([" ","　","\t"],'',$url);
@@ -281,7 +290,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$url=$url ? $http.$url :'';
 			$sub = $sub ? $sub : $defalt_subject;
 			$no=(int)$no;
-			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
+			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
 			$tree[]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
 
@@ -297,7 +306,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 				$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
-			$no=(int)$no+1;//記事番号0を回避
+			$no= $renumbering ? $__no : (int)$no+1;//記事番号0を回避
 
 			$time=$time ? $time*1000 : 0; 
 			$url = str_replace([" ","　","\t"],'',$url);
@@ -305,13 +314,14 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$url="";
 			}
 			$url=$url ? $http.$url :'';
-			if(!isset($oya[$no])){//記事No重複回避 画像がある親優先
-				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,$ip,$ext,$W,$H,$time,,$ptime,\n";
+			if($renumbering || !isset($oya[$no])){//記事No重複回避 画像がある親優先
+				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
 				$tree[]=$no;
 			}
 
 		}
 
+		++$__no;
 	}
 
 	$treeline[]=implode(",",$tree)."\n";
