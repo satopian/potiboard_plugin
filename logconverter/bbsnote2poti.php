@@ -1,6 +1,6 @@
 <?php
 // BBSNote → POTI-board ログ変換ツール
-// V0.9.23 lot.230222
+// V0.9.25 lot.230314
 // (c)2022-2023 さとぴあ(satopian) 
 // Licence MIT
 //
@@ -208,9 +208,10 @@ check_dir ("poti/thumb");//変換されたサムネイルが入るディレク�
 sort($logfiles_arr);
 $__no=1;
 $oya=[];
+$newlog=[];
+$treeline=[];
 foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて読み込む
-	$arr_logs=[];
-	$tree=[];
+	$log=[];
 	$fp=fopen($logfile,"r");
 	while($line =fgets($fp)){
 		$_no=null;
@@ -243,8 +244,8 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 		$log[]=$line;//1スレッド分
 	}
 	fclose($fp);
-	$arr_logs=array_values($arr_logs);
-	foreach($arr_logs as $i=>$val){//1スレッド分のログを処理
+	$tree=[];
+	foreach($log as $i=>$val){//1スレッド分のログを処理
 
 		if($i===0){//スレッドの親
 			if($relm){//relm
