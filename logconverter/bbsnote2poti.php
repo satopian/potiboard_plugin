@@ -103,6 +103,10 @@ $http='http://';//または 'https://'
 
 $defalt_subject = '無題';
 
+/* ----------------- 名前が空欄の時 ----------------- */
+
+$defalt_name = '無題';
+
 /* --------------- タイムゾーン --------------- */
 
 define('DEFAULT_TIMEZONE','Asia/Tokyo');
@@ -292,6 +296,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$url="";
 			}
 			$sub = $sub ? $sub : $defalt_subject;
+			$name = $name ? $neme : $defalt_name;
 			$no=(int)$no;
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
 			$tree[]=$no;
@@ -320,6 +325,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				$url="";
 			}
 			if($renumbering || !isset($oya[$no])){//記事No重複回避 画像がある親優先
+				$name = $name ? $neme : $defalt_name;
 				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
 				$tree[]=$no;
 			}
