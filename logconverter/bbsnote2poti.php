@@ -1,6 +1,6 @@
 <?php
 // BBSNote → POTI-board ログ変換ツール
-// v0.9.26 lot.230314
+// v0.9.28 lot.230314
 // (c)2022-2023 さとぴあ(satopian) 
 // Licence MIT
 //
@@ -284,11 +284,13 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				chmod("poti/src/$time.$pchext",PERMISSION_FOR_DEST);
 			}
 
-			$url = str_replace([" ","　","\t"],'',$url);
-			if(!$url||stripos('sage',$url)!==false||preg_match("/&lt;|</i",$url)){
+			if(!$url||stripos('sage',$url)!==false){
 				$url="";
 			}
 			$url=$url ? $http.$url :'';
+			if(!$url||!filter_var($url,FILTER_VALIDATE_URL)){
+				$url="";
+			}
 			$sub = $sub ? $sub : $defalt_subject;
 			$no=(int)$no;
 			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
@@ -310,10 +312,13 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$no= $renumbering ? $__no : (int)$no+1;//記事番号0を回避
 
 			$time=$time ? $time*1000 : 0; 
-			if(!$url||!filter_var($url,FILTER_VALIDATE_URL)){
+			if(!$url||stripos('sage',$url)!==false){
 				$url="";
 			}
 			$url=$url ? $http.$url :'';
+			if(!$url||!filter_var($url,FILTER_VALIDATE_URL)){
+				$url="";
+			}
 			if($renumbering || !isset($oya[$no])){//記事No重複回避 画像がある親優先
 				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
 				$tree[]=$no;
