@@ -1,6 +1,6 @@
 <?php
 // BBSNote → POTI-board ログ変換ツール
-// v0.9.28.3 lot.230315
+// v0.9.29.0 lot.230828
 // (c)2022-2023 さとぴあ(satopian) 
 // Licence MIT
 //
@@ -260,6 +260,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
 			}
+			$thumbnail="";//元のログファイルのthumbnailは使用しない。
 			$no= $renumbering ? $__no : (int)$no+1;//記事番号0を回避
 			$time=$time ? $time.'000' : 0; 
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
@@ -272,15 +273,18 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 				if($save_at_synonym && is_file("poti/src/{$time}{$ext}")){
 						$time=$time+1;
 				}
-				copy("data/$filename","poti/src/{$time}{$ext}");
-				chmod("poti/src/{$time}{$ext}",PERMISSION_FOR_DEST);
+				if(!$save_at_synonym && !is_file("poti/src/{$time}{$ext}")){
+					copy("data/$filename","poti/src/{$time}{$ext}");
+					chmod("poti/src/{$time}{$ext}",PERMISSION_FOR_DEST);
+				}
 				if($usethumb&&($thumbnail_size=thumb("poti/src/",$time,$ext,$max_w,$max_h))){//作成されたサムネイルのサイズ
 					$W=$thumbnail_size['w'];
 					$H=$thumbnail_size['h'];
+					$thumbnail="thumbnail";
 				}else{
 					list($W,$H)=getimagesize("poti/src/{$time}{$ext}");
 				}
-				}
+			}
 
 			if($pchext && is_file("data/$pch")){//動画
 				copy("data/$pch","poti/src/$time.$pchext");
@@ -297,7 +301,27 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$sub = $sub ? $sub : $defalt_subject;
 			$name = $name ? $name : $defalt_name;
 			$no=(int)$no;
-			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
+			$pchext = $pchext ? '.'.$pchext : "";
+
+			switch($pchext){
+				case '.pch':
+					$tool='neo';
+					break;
+				case 'PaintBBS':
+					$tool='PaintBBS';
+					break;
+				case '.spch':
+					$tool='shi-Painter';
+					break;
+				default:
+					if($ext){
+						$tool='???';
+					}
+					break;
+			}
+
+			$newlog[$no]="$no,$now,$name,$email,$sub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,,$pchext,$thumbnail,$tool,6\n";
+
 			$tree[]=$no;
 			$resub=$sub ? "Re: {$sub}" :'';
 
@@ -315,7 +339,8 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			}
 			$no= $renumbering ? $__no : (int)$no+1;//記事番号0を回避
 
-			$time=$time ? $time*1000 : 0; 
+			$time=$time ? $time.'000' : 0; 
+
 			if(!$url||stripos('sage',$url)!==false){
 				$url="";
 			}
@@ -325,7 +350,11 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			}
 			if($renumbering || !isset($oya[$no])){//記事No重複回避 画像がある親優先
 				$name = $name ? $name : $defalt_name;
-				$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,\n";
+				$thumbnail= "";
+				$pchext = "";
+				$tool = "";
+					$newlog[$no]="$no,$now,$name,$email,$resub,$com,$url,$host,,$ext,$W,$H,$time,,$ptime,,$pchext,$thumbnail,$tool,6\n";
+
 				$tree[]=$no;
 			}
 
