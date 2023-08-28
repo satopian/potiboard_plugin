@@ -305,9 +305,6 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 
 			switch($pchext){
 				case '.pch':
-					$tool='neo';
-					break;
-				case 'PaintBBS':
 					$tool='PaintBBS';
 					break;
 				case '.spch':
