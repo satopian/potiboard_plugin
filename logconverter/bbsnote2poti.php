@@ -308,7 +308,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 					$tool='PaintBBS';
 					break;
 				case '.spch':
-					$tool='shi-Painter';
+					$tool='Shi-Painter';
 					break;
 				default:
 					if($ext){
