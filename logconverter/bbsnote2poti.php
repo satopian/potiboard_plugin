@@ -263,6 +263,7 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			$thumbnail="";//元のログファイルのthumbnailは使用しない。
 			$no= $renumbering ? $__no : (int)$no+1;//記事番号0を回避
 			$time=$time ? $time.'000' : 0; 
+			$time=basename($time);
 			$ext = $filename ? '.'.pathinfo($filename,PATHINFO_EXTENSION ) :'';
 			$pchext = pathinfo($pch,PATHINFO_EXTENSION );
 
