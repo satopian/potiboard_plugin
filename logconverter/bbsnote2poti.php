@@ -189,7 +189,7 @@ if($lets_convert && !$password_is_matched){
 	error('パスワードが違います。');
 }
 if(!$lets_convert || !$password_is_matched){
-	exit;
+	exit();
 }
 $unlink_php_self=filter_input(INPUT_POST,'unlink_php_self',FILTER_VALIDATE_BOOLEAN);
 $logfiles_arr =(glob($bbsnote_log_dir.'{'.$bbsnote_filehead_logs.'*.'.$bbsnote_log_ext.'}', GLOB_BRACE));//ログファイルをglob
@@ -550,6 +550,6 @@ function error($str) {
 </body>
 </html>
 <?php
-exit;
+exit();
 }
 ?>
