@@ -468,7 +468,7 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 	}
 	
 	switch (mime_content_type($fname)) {
-		case "image/gif";
+		case "image/gif":
 		if(function_exists("ImageCreateFromGIF")){//gif
 				$im_in = @ImageCreateFromGIF($fname);
 				if(!$im_in)return;
@@ -477,11 +477,11 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 				return;
 			}
 		break;
-		case "image/jpeg";
+		case "image/jpeg":
 		$im_in = @ImageCreateFromJPEG($fname);//jpg
 			if(!$im_in)return;
 		break;
-		case "image/png";
+		case "image/png":
 		if(function_exists("ImageCreateFromPNG")){//png
 				$im_in = @ImageCreateFromPNG($fname);
 				if(!$im_in)return;
@@ -490,7 +490,7 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 				return;
 			}
 			break;
-		case "image/webp";
+		case "image/webp":
 		if(function_exists("ImageCreateFromWEBP")){//webp
 			$im_in = @ImageCreateFromWEBP($fname);
 			if(!$im_in)return;
