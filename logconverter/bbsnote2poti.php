@@ -418,7 +418,7 @@ function check_poti ($path) {
 
 //GD版が使えるかチェック
 function gd_check(){
-	$check = array("ImageCreate","ImageCopyResized","ImageCreateFromJPEG","ImageJPEG","ImageDestroy");
+	$check = array("ImageCreate","ImageCopyResized","ImageCreateFromJPEG","ImageJPEG");
 
 	//最低限のGD関数が使えるかチェック
 	if(get_gd_ver() && (ImageTypes() & IMG_JPG)){
@@ -520,8 +520,10 @@ function thumb($path,$tim,$ext,$max_w,$max_h){
 	// サムネイル画像を保存
 	ImageJPEG($im_out, THUMB_DIR.$tim.'s.jpg',THUMB_Q);
 	// 作成したイメージを破棄
-	ImageDestroy($im_in);
-	ImageDestroy($im_out);
+	if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+		ImageDestroy($im_in);
+		ImageDestroy($im_out);
+	}
 	if(!chmod(THUMB_DIR.$tim.'s.jpg',PERMISSION_FOR_DEST)){
 		return;
 	}
