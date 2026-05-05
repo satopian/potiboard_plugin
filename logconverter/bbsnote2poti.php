@@ -399,14 +399,14 @@ file_put_contents('poti/img.log',implode("",$newlog),LOCK_EX);
 chmod('poti/img.log',PERMISSION_FOR_LOG);
 
 
-function check_dir ($path) {
+function check_dir (?string $path) {
 
 	if (!is_dir($path)) {
 			mkdir($path, PERMISSION_FOR_DIR,true);
 			chmod($path, PERMISSION_FOR_DIR);
 	}
 }
-function check_poti ($path) {
+function check_poti (?string $path) {
 
 	if (!is_dir($path)) {
 			mkdir($path, PERMISSION_FOR_POTI,true);
