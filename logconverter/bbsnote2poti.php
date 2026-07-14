@@ -252,10 +252,10 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 
 		if($i===0){//スレッドの親
 			if($relm){//relm
-			list($threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host,,,,,$agent,,$filename,$W,$H,,$thumbnail,$pch,,,$ptime,)
+			[$threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host,,,,,$agent,,$filename,$W,$H,,$thumbnail,$pch,,,$ptime,]
 				=explode("<>",$val);
 			}else{//BBSNote
-			list($no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail)
+			[$no,$name,$now,$sub,$email,$url,$com,$host,$ip,$agent,$filename,$W,$H,,,$pch,$ptime,$applet,$thumbnail]
 			=explode("\t",$val."\t"."\t"."\t"."\t"."\t"."\t"."\t"."\t"."\t");
 			$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 			$time=(int)strtotime($time);//strからUNIXタイムスタンプ
@@ -279,10 +279,10 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 					chmod("poti/src/{$time}{$ext}",PERMISSION_FOR_DEST);
 				}
 				if($usethumb&&(thumbnail_gd::thumb("poti/src/",$time.$ext,$time,$max_w,$max_h))){//作成されたサムネイルのサイズ
-					list($W,$H)=getimagesize(THUMB_DIR."{$time}s.jpg");
+					[$W,$H]=getimagesize(THUMB_DIR."{$time}s.jpg");
 					$thumbnail="thumbnail";
 				}else{
-					list($W,$H)=getimagesize("poti/src/{$time}{$ext}");
+					[$W,$H]=getimagesize("poti/src/{$time}{$ext}");
 				}
 			}
 
@@ -326,10 +326,10 @@ foreach($logfiles_arr as $logfile){//ログファイルを一つずつ開いて�
 			unset($threadno,$no,$now,$name,$sub,$email,$url,$com,$time,$ip,$host,$agent,$filename,$W,$H,$ptime,$thumbnail,$pch,$applet);
 			$W=$H=$pch=$ptime=$ext=$time=$ip='';
 			if($relm){//relm
-				list($threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host)
+				[$threadno,$no,$now,$name,,$sub,$email,$url,$com,$time,$ip,$host]
 				=explode("<>",$val);
 			}else{//BBSNote
-				list($no,$name,$now,$com,,$host,$email,$url)
+				[$no,$name,$now,$com,,$host,$email,$url]
 				=explode("\t",$val);
 				$time= $now ? preg_replace('/\(.+\)/', '', $now):0;//曜日除去
 				$time=(int)strtotime($time);//strからUNIXタイムスタンプ
@@ -369,7 +369,7 @@ unset($oya);
 //ツリーログ
 $_treeline=[];
 foreach($treeline as $val){
-	list($_oya,)=explode(',',rtrim($val));
+	[$_oya,]=explode(',',rtrim($val));
 	$_treeline[$_oya]=$val;
 }
 $treeline=$_treeline;
@@ -452,7 +452,7 @@ class thumbnail_gd {
 		}
 
 		$fsize = filesize($fname); // ファイルサイズを取得
-		list($w,$h) = GetImageSize($fname); // 画像の幅と高さを取得
+		[$w,$h] = GetImageSize($fname); // 画像の幅と高さを取得
 		$w_h_size_over = $max_w && $max_h && ($w > $max_w || $h > $max_h);
 		$f_size_over = !isset($options['toolarge']) ? ($fsize>1024*1024) : false;
 		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['2webp']) && !isset($options['2png']) && !isset($options['2jpeg'])){//リサイズも変換もしない

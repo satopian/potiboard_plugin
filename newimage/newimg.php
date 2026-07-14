@@ -33,7 +33,7 @@ $fp = fopen(LOGFILE, "r");//ログを開く
 	$filename='';
 	$i=0;
 	while ($line = fgets($fp)) {
-		list($no,,,,,,,,,$ext,,,$time,) = explode(",", $line);
+		[$no,,,,,,,,,$ext,,,$time,] = explode(",", $line);
 		$time=basename($time);
 		$ext=basename($ext);
 		if ($ext&&is_file(IMG_DIR.$time.$ext)){
